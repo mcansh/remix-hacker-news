@@ -1,0 +1,34 @@
+{
+  "name": "remix-hacker-news",
+  "private": true,
+  "description": "hacker news made with remix.run",
+  "repository": "https://github.com/mcansh/remix-hacker-news",
+  "author": "Logan McAnsh <logan@mcan.sh> (https://mcan.sh)",
+  "sideEffects": false,
+  "main": "server/index.js",
+  "scripts": {
+    "build": "remix build",
+    "dev": "remix dev",
+    "postinstall": "remix setup node",
+    "start": "vercel dev"
+  },
+  "dependencies": {
+    "@remix-run/react": "0.19.3",
+    "@remix-run/vercel": "0.19.3",
+    "@vercel/node": "1.12.1",
+    "react": "17.0.2",
+    "react-dom": "17.0.2",
+    "react-router-dom": "6.0.0-beta.6",
+    "remix": "0.19.3"
+  },
+  "devDependencies": {
+    "@remix-run/dev": "0.19.3",
+    "@types/react": "17.0.33",
+    "@types/react-dom": "17.0.10",
+    "typescript": "4.4.4",
+    "vercel": "23.1.2"
+  },
+  "engines": {
+    "node": ">=14"
+  }
+}
