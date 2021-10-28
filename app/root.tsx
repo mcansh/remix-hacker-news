@@ -1,33 +1,24 @@
-import type { LinksFunction, LoaderFunction } from "remix";
-import {
-  Meta,
-  Links,
-  Scripts,
-  useLoaderData,
-  LiveReload,
-  useCatch
+import type {
+  ErrorBoundaryComponent,
+  LinksFunction,
+  RouteComponent,
 } from "remix";
+import { Meta, Links, Scripts, LiveReload, useCatch } from "remix";
 import { Outlet } from "react-router-dom";
 
-import stylesUrl from "./styles/global.css";
+import tailwindUrl from "./styles/tailwind.css";
 
-export let links: LinksFunction = () => {
-  return [{ rel: "stylesheet", href: stylesUrl }];
+let links: LinksFunction = () => {
+  return [{ rel: "stylesheet", href: tailwindUrl }];
 };
 
-export let loader: LoaderFunction = async () => {
-  return { date: new Date() };
-};
-
-function Document({
-  children,
-  title
-}: {
-  children: React.ReactNode;
+interface DocumentProps {
   title?: string;
-}) {
+}
+
+const Document: React.FC<DocumentProps> = ({ children, title }) => {
   return (
-    <html lang="en">
+    <html lang="en" className="bg-zinc-100">
       <head>
         <meta charSet="utf-8" />
         <link rel="icon" href="/favicon.png" type="image/png" />
@@ -42,22 +33,17 @@ function Document({
       </body>
     </html>
   );
-}
+};
 
-export default function App() {
-  let data = useLoaderData();
-
+const App: RouteComponent = () => {
   return (
     <Document>
       <Outlet />
-      <footer>
-        <p>This page was rendered at {data.date.toLocaleString()}</p>
-      </footer>
     </Document>
   );
-}
+};
 
-export function CatchBoundary() {
+const CatchBoundary: React.VFC = () => {
   let caught = useCatch();
 
   switch (caught.status) {
@@ -76,9 +62,9 @@ export function CatchBoundary() {
         `Unexpected caught response with status: ${caught.status}`
       );
   }
-}
+};
 
-export function ErrorBoundary({ error }: { error: Error }) {
+const ErrorBoundary: ErrorBoundaryComponent = ({ error }) => {
   console.error(error);
 
   return (
@@ -91,4 +77,7 @@ export function ErrorBoundary({ error }: { error: Error }) {
       </p>
     </Document>
   );
-}
+};
+
+export default App;
+export { links, loader, CatchBoundary, ErrorBoundary };

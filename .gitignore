@@ -3,3 +3,7 @@ node_modules
 /.cache
 /server/build
 /public/build
+
+.vercel
+
+app/styles/tailwind.css
