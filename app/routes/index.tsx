@@ -12,8 +12,12 @@ export let meta: MetaFunction = () => {
   };
 };
 
+type SlimHackerNewsItem = Pick<
+  HackerNewsItem,
+  "id" | "title" | "url" | "time" | "score" | "by" | "descendants"
+>;
 interface RouteData {
-  data: HackerNewsItem[];
+  data: SlimHackerNewsItem[];
 }
 
 export let loader: LoaderFunction = async () => {
@@ -21,7 +25,7 @@ export let loader: LoaderFunction = async () => {
     "https://hacker-news.firebaseio.com/v0/topstories.json"
   );
 
-  let data = await Promise.all(
+  let data: HackerNewsItem[] = await Promise.all(
     ids
       .slice(0, 29)
       .map((id) =>
@@ -31,8 +35,20 @@ export let loader: LoaderFunction = async () => {
       )
   );
 
+  let slimData: SlimHackerNewsItem[] = data.map((item) => {
+    return {
+      id: item.id,
+      title: item.title,
+      url: item.url,
+      time: item.time,
+      score: item.score,
+      by: item.by,
+      descendants: item.descendants,
+    };
+  });
+
   let result: RouteData = {
-    data,
+    data: slimData,
   };
 
   return result;
