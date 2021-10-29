@@ -23,13 +23,15 @@
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "react-router-dom": "6.0.0-beta.6",
-    "remix": "0.19.3"
+    "remix": "0.19.3",
+    "sanitize-html": "2.5.2"
   },
   "devDependencies": {
     "@remix-run/dev": "0.19.3",
     "@remix-run/serve": "0.19.3",
     "@types/react": "17.0.33",
     "@types/react-dom": "17.0.10",
+    "@types/sanitize-html": "2.5.0",
     "pm2": "5.1.2",
     "tailwindcss": "3.0.0-alpha.1",
     "typescript": "4.4.4",

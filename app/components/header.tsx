@@ -17,7 +17,7 @@ const Header: React.VFC = () => (
             className={({ isActive }) =>
               clsx("px-2.5", isActive ? "text-white" : "hover:text-white")
             }
-            to="/new"
+            to="/newest"
           >
             new
           </NavLink>
@@ -27,19 +27,9 @@ const Header: React.VFC = () => (
             className={({ isActive }) =>
               clsx("px-2.5", isActive ? "text-white" : "hover:text-white")
             }
-            to="/past"
+            to="/front"
           >
             past
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
-            className={({ isActive }) =>
-              clsx("px-2.5", isActive ? "text-white" : "hover:text-white")
-            }
-            to="/comments"
-          >
-            comments
           </NavLink>
         </li>
         <li>

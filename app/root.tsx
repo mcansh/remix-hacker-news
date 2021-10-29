@@ -28,7 +28,10 @@ const Document: React.FC<DocumentProps> = ({ children, title }) => {
         <Links />
       </head>
       <body>
-        {children}
+        <div className="max-w-6xl w-full mx-auto bg-white mt-2.5">
+          <Header />
+          {children}
+        </div>
         <Scripts />
         {process.env.NODE_ENV === "development" && <LiveReload />}
       </body>
@@ -39,10 +42,7 @@ const Document: React.FC<DocumentProps> = ({ children, title }) => {
 const App: RouteComponent = () => {
   return (
     <Document>
-      <div className="max-w-6xl w-full mx-auto bg-white mt-2.5">
-        <Header />
-        <Outlet />
-      </div>
+      <Outlet />
     </Document>
   );
 };

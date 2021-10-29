@@ -1,25 +1,22 @@
-import { MetaFunction, LoaderFunction, Link, RouteComponent } from "remix";
-import { useLoaderData } from "remix";
+import {
+  RouteComponent,
+  LoaderFunction,
+  MetaFunction,
+  useLoaderData,
+} from "remix";
 import { fetcher } from "@mcansh/fetcher";
 
-import { HackerNewsItem } from "~/types/hackernews";
 import { SlimHackerNewsItem } from "~/types";
+import { HackerNewsItem } from "~/types/hackernews";
 import { Feed } from "~/components/feed";
-
-let meta: MetaFunction = () => {
-  return {
-    title: "Remix Hacker News",
-    description: "Hacker News made with Remix.run",
-  };
-};
 
 interface RouteData {
   stories: SlimHackerNewsItem[];
 }
 
-let loader: LoaderFunction = async () => {
+const loader: LoaderFunction = async () => {
   let ids = await fetcher<number[]>(
-    "https://hacker-news.firebaseio.com/v0/topstories.json"
+    "https://hacker-news.firebaseio.com/v0/jobstories.json"
   );
 
   let data: HackerNewsItem[] = await Promise.all(
@@ -51,10 +48,14 @@ let loader: LoaderFunction = async () => {
   return result;
 };
 
-const IndexPage: RouteComponent = () => {
-  let data = useLoaderData<RouteData>();
+const meta: MetaFunction = () => ({
+  title: "Jobs | Remix Hacker News",
+});
+
+const JobsPage: RouteComponent = () => {
+  const data = useLoaderData<RouteData>();
   return <Feed stories={data.stories} />;
 };
 
-export default IndexPage;
+export default JobsPage;
 export { loader, meta };

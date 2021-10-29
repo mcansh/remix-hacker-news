@@ -1,19 +1,8 @@
-export interface HackerNewsItem {
-  by: string;
-  descendants?: number;
-  id: number;
-  kids?: number[];
-  score: number;
-  time: number;
-  title: string;
-  type: HackerNewsItemType;
-  url?: string;
-  text?: string;
-}
+import { HackerNewsItem } from "./hackernews";
 
-export type HackerNewsItemType =
-  | "job"
-  | "story"
-  | "comment"
-  | "poll"
-  | "pollopt";
+type SlimHackerNewsItem = Pick<
+  HackerNewsItem,
+  "id" | "title" | "url" | "time" | "score" | "by" | "descendants"
+>;
+
+export { SlimHackerNewsItem };
