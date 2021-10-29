@@ -1,4 +1,4 @@
-import { MetaFunction, LoaderFunction, Link, RouteComponent } from "remix";
+import { MetaFunction, LoaderFunction, RouteComponent } from "remix";
 import { useLoaderData } from "remix";
 
 import { SlimHackerNewsItem } from "~/types";

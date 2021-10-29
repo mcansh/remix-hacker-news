@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Link } from "remix";
-import { formatDate } from "~/lib/format-date";
+import timeago from "time-ago";
+
 import { SlimHackerNewsItem } from "~/types";
 
 interface Props {
@@ -12,7 +13,9 @@ const Feed: React.VFC<Props> = ({ stories }) => {
     <div className="my-2.5 space-y-2.5 px-2.5 py-1">
       {stories.map((story, index) => {
         let storyDate = new Date(story.time * 1000);
-        let formatted = formatDate(storyDate);
+        let formatted = timeago.ago(storyDate);
+        let commentText =
+          story.descendants && story.descendants === 1 ? "comment" : "comments";
 
         return (
           <div key={story.id} className="flex space-x-2.5">
@@ -26,7 +29,11 @@ const Feed: React.VFC<Props> = ({ stories }) => {
                     {story.title}
                   </a>
                 ) : (
-                  <Link className="inline-block mr-2" to={`/item/${story.id}`}>
+                  <Link
+                    prefetch="intent"
+                    className="inline-block mr-2"
+                    to={`/item/${story.id}`}
+                  >
                     {story.title}
                   </Link>
                 )}
@@ -38,12 +45,20 @@ const Feed: React.VFC<Props> = ({ stories }) => {
               </div>
               <div className="text-sm text-neutral-400">
                 {story.score} points by{" "}
-                <Link className="hover:underline" to={`/user/${story.by}`}>
+                <Link
+                  prefetch="intent"
+                  className="hover:underline"
+                  to={`/user/${story.by}`}
+                >
                   {story.by}
                 </Link>{" "}
                 {formatted} |{" "}
-                <Link className="hover:underline" to={`item/${story.id}`}>
-                  {story.descendants} comments
+                <Link
+                  prefetch="intent"
+                  className="hover:underline"
+                  to={`item/${story.id}`}
+                >
+                  {story.descendants} {commentText}
                 </Link>
               </div>
             </div>
