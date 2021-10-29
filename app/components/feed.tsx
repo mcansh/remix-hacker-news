@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Link } from "remix";
-import timeago from "time-ago";
+import * as timeago from "time-ago";
 
 import { SlimHackerNewsItem } from "~/types";
 
