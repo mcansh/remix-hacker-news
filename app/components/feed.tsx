@@ -12,8 +12,7 @@ const Feed: React.VFC<Props> = ({ stories }) => {
   return (
     <div className="my-2.5 space-y-2.5 px-2.5 py-1">
       {stories.map((story, index) => {
-        let storyDate = new Date(story.time * 1000);
-        let formatted = timeago.ago(storyDate);
+        let formatted = timeago.ago(story.time * 1000);
         let commentText =
           story.descendants && story.descendants === 1 ? "comment" : "comments";
 
