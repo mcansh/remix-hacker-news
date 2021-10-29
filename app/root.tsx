@@ -7,6 +7,7 @@ import { Meta, Links, Scripts, LiveReload, useCatch } from "remix";
 import { Outlet } from "react-router-dom";
 
 import tailwindUrl from "./styles/tailwind.css";
+import { Header } from "./components/header";
 
 let links: LinksFunction = () => {
   return [{ rel: "stylesheet", href: tailwindUrl }];
@@ -38,7 +39,10 @@ const Document: React.FC<DocumentProps> = ({ children, title }) => {
 const App: RouteComponent = () => {
   return (
     <Document>
-      <Outlet />
+      <div className="max-w-6xl w-full mx-auto bg-white mt-2.5">
+        <Header />
+        <Outlet />
+      </div>
     </Document>
   );
 };

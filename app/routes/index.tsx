@@ -58,101 +58,47 @@ export default function Index() {
   let data = useLoaderData<RouteData>();
 
   return (
-    <div className="max-w-6xl w-full mx-auto bg-white mt-2.5">
-      <header className="flex items-center p-1 bg-primary">
-        <Link to="/" className="flex items-center mr-2.5 flex-shrink-0">
-          <img height={20} width={20} src="/favicon.png" alt="remix logo" />
-          <h1 className="ml-1 font-bold">Hacker Remix</h1>
-        </Link>
-        <nav className="flex justify-between w-full">
-          <ul className="flex items-center">
-            <li>
-              <Link className="px-2.5" to="/new">
-                new
-              </Link>
-            </li>
-            <li>
-              <Link className="px-2.5" to="/past">
-                past
-              </Link>
-            </li>
-            <li>
-              <Link className="px-2.5" to="/comments">
-                comments
-              </Link>
-            </li>
-            <li>
-              <Link className="px-2.5" to="/ask">
-                ask
-              </Link>
-            </li>
-            <li>
-              <Link className="px-2.5" to="/show">
-                show
-              </Link>
-            </li>
-            <li>
-              <Link className="px-2.5" to="/jobs">
-                jobs
-              </Link>
-            </li>
-            <li>
-              <Link className="px-2.5" to="/submit">
-                submit
-              </Link>
-            </li>
-          </ul>
-          <div>
-            <Link to="/login">login</Link>
-          </div>
-        </nav>
-      </header>
+    <div className="my-2.5 space-y-2.5 px-2.5 py-1">
+      {data.data.map((story, index) => {
+        let storyDate = new Date(story.time * 1000);
+        let formatted = formatDate(storyDate);
 
-      <div className="my-2.5 space-y-2.5 px-2.5 py-1">
-        {data.data.map((story, index) => {
-          let storyDate = new Date(story.time * 1000);
-          let formatted = formatDate(storyDate);
-
-          return (
-            <div key={story.id} className="flex space-x-2.5">
-              <span className="text-neutral-400 text-sm pt-0.5">
-                {index + 1}.
-              </span>
+        return (
+          <div key={story.id} className="flex space-x-2.5">
+            <span className="text-neutral-400 text-sm pt-0.5">
+              {index + 1}.
+            </span>
+            <div>
               <div>
-                <div>
-                  {story.url ? (
-                    <a className="inline-block mr-2" href={story.url}>
-                      {story.title}
-                    </a>
-                  ) : (
-                    <Link
-                      className="inline-block mr-2"
-                      to={`/item/${story.id}`}
-                    >
-                      {story.title}
-                    </Link>
-                  )}
-                  {story.url && (
-                    <span className="text-sm hover:underline text-neutral-400">
-                      {new URL(story.url).hostname}
-                    </span>
-                  )}
-                </div>
-                <div className="text-sm text-neutral-400">
-                  {story.score} points by{" "}
-                  <Link className="hover:underline" to={`/user/${story.by}`}>
-                    {story.by}
-                  </Link>{" "}
-                  {formatted} |{" "}
-                  <Link className="hover:underline" to={`item/${story.id}`}>
-                    {story.descendants} comments
+                {story.url ? (
+                  <a className="inline-block mr-2" href={story.url}>
+                    {story.title}
+                  </a>
+                ) : (
+                  <Link className="inline-block mr-2" to={`/item/${story.id}`}>
+                    {story.title}
                   </Link>
-                </div>
+                )}
+                {story.url && (
+                  <span className="text-sm hover:underline text-neutral-400">
+                    {new URL(story.url).hostname}
+                  </span>
+                )}
+              </div>
+              <div className="text-sm text-neutral-400">
+                {story.score} points by{" "}
+                <Link className="hover:underline" to={`/user/${story.by}`}>
+                  {story.by}
+                </Link>{" "}
+                {formatted} |{" "}
+                <Link className="hover:underline" to={`item/${story.id}`}>
+                  {story.descendants} comments
+                </Link>
               </div>
             </div>
-          );
-        })}
-      </div>
+          </div>
+        );
+      })}
     </div>
   );
 }
