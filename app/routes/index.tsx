@@ -7,8 +7,8 @@ import { formatDate } from "~/lib/format-date";
 
 export let meta: MetaFunction = () => {
   return {
-    title: "Remix Starter",
-    description: "Welcome to remix!",
+    title: "Remix Hacker News",
+    description: "Hacker News made with Remix.run",
   };
 };
 
@@ -58,13 +58,13 @@ export default function Index() {
   let data = useLoaderData<RouteData>();
 
   return (
-    <div className="max-w-4xl w-full mx-auto bg-white mt-2.5">
-      <header className="bg-[#ff6600] flex items-center p-2">
-        <Link to="/" className="flex items-center mr-2.5">
+    <div className="max-w-6xl w-full mx-auto bg-white mt-2.5">
+      <header className="flex items-center p-1 bg-primary">
+        <Link to="/" className="flex items-center mr-2.5 flex-shrink-0">
           <img height={20} width={20} src="/favicon.png" alt="remix logo" />
-          <h1 className="font-bold ml-1">Hacker Remix</h1>
+          <h1 className="ml-1 font-bold">Hacker Remix</h1>
         </Link>
-        <nav>
+        <nav className="flex justify-between w-full">
           <ul className="flex items-center">
             <li>
               <Link className="px-2.5" to="/new">
@@ -102,6 +102,9 @@ export default function Index() {
               </Link>
             </li>
           </ul>
+          <div>
+            <Link to="/login">login</Link>
+          </div>
         </nav>
       </header>
 
@@ -130,12 +133,12 @@ export default function Index() {
                     </Link>
                   )}
                   {story.url && (
-                    <span className="hover:underline text-neutral-400 text-sm">
+                    <span className="text-sm hover:underline text-neutral-400">
                       {new URL(story.url).hostname}
                     </span>
                   )}
                 </div>
-                <div className="text-neutral-400 text-sm">
+                <div className="text-sm text-neutral-400">
                   {story.score} points by{" "}
                   <Link className="hover:underline" to={`/user/${story.by}`}>
                     {story.by}
