@@ -24,6 +24,7 @@ const Document: React.FC<DocumentProps> = ({ children, title }) => {
         <meta charSet="utf-8" />
         <link rel="icon" href="/favicon.png" type="image/png" />
         {title ? <title>{title}</title> : null}
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <Links />
       </head>
@@ -84,4 +85,4 @@ const ErrorBoundary: ErrorBoundaryComponent = ({ error }) => {
 };
 
 export default App;
-export { links, loader, CatchBoundary, ErrorBoundary };
+export { links, CatchBoundary, ErrorBoundary };
