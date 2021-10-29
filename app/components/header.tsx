@@ -5,8 +5,11 @@ import { NavLink } from "remix";
 import logoUrl from "../../public/favicon.png";
 
 const Header: React.VFC = () => (
-  <header className="flex items-center p-1 bg-primary">
-    <NavLink to="/" className="flex items-center mr-2.5 flex-shrink-0">
+  <header className="flex flex-col items-center p-1 sm:flex-row bg-primary">
+    <NavLink
+      to="/"
+      className="flex items-center mb-2.5 sm:mb-0 mr-2.5 flex-shrink-0"
+    >
       <img height={20} width={20} src={logoUrl} alt="remix logo" />
       <h1 className="ml-1 font-bold">Hacker Remix</h1>
     </NavLink>

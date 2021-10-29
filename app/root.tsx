@@ -1,3 +1,4 @@
+import * as React from "react";
 import type {
   ErrorBoundaryComponent,
   LinksFunction,
@@ -29,7 +30,7 @@ const Document: React.FC<DocumentProps> = ({ children, title }) => {
         <Links />
       </head>
       <body>
-        <div className="max-w-6xl w-full mx-auto bg-white mt-2.5">
+        <div className="max-w-6xl w-full mx-auto bg-white sm:mt-2.5">
           <Header />
           {children}
         </div>
