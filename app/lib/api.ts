@@ -13,7 +13,7 @@ let hacker_news_item_schema = z.object({
   score: z.number(),
   time: z.number(),
   title: z.string(),
-  type: z.enum(["job", "story", "comment", "poll", "pollopt"]),
+  type: z.enum(["job", "story", "poll", "pollopt"]),
   url: z.string().optional(),
   text: z.string().optional(),
 });
@@ -24,6 +24,16 @@ let hacker_news_user_schema = z.object({
   karma: z.number(),
   about: z.string().optional(),
   submitted: z.array(z.number()),
+});
+
+let hacker_news_comment_schema = z.object({
+  by: z.string().optional(),
+  id: z.number(),
+  kids: z.array(z.number()).optional(),
+  parent: z.number(),
+  text: z.string().optional(),
+  time: z.number(),
+  type: z.enum(["comment"]),
 });
 
 type Endpoint =
@@ -46,7 +56,7 @@ function get_url(path: string) {
 }
 
 export const api = {
-  get_user: async (username: string) => {
+  async get_user(username: string) {
     let url = get_url(`/user/${username}.json`);
     url.searchParams.set("print", "pretty");
     let user = await zetch(hacker_news_user_schema, url.toString());
@@ -67,7 +77,7 @@ export const api = {
     return { user: { ...user, about }, posts };
   },
 
-  get_posts: async (endpoint: Endpoint) => {
+  async get_posts(endpoint: Endpoint) {
     let url = get_url(endpoint);
     let ids = await zetch(z.array(z.number()), url.toString());
 
@@ -82,6 +92,41 @@ export const api = {
     return data.map((item) => {
       return get_data_from_post(item);
     });
+  },
+
+  async get_post(id: number) {
+    let story = await zetch(
+      hacker_news_item_schema,
+      get_url(`/item/${id}.json`).toString()
+    );
+
+    let kids = story.kids
+      ? await Promise.all(
+          story.kids?.map(async (kid) => {
+            let result = await zetch(
+              hacker_news_comment_schema,
+              get_url(`/item/${kid}.json`).toString()
+            );
+
+            return {
+              ...result,
+              text: result.text ? sanitizeHtml(result.text) : undefined,
+              relative_date: timeago.ago(result.time * 1000),
+            };
+          })
+        ).then((data) => {
+          return data.filter(
+            (item) => item.by != undefined && item.text != undefined
+          );
+        })
+      : [];
+
+    return {
+      ...story,
+      text: story.text ? sanitizeHtml(story.text) : undefined,
+      relative_date: timeago.ago(story.time * 1000),
+      kids,
+    };
   },
 };
 
