@@ -1,5 +1,4 @@
-import * as React from "react";
-import { Link } from "remix";
+import { Link } from "@remix-run/react";
 import * as timeago from "time-ago";
 
 import { SlimHackerNewsItem } from "~/types";
@@ -8,7 +7,7 @@ interface Props {
   stories: Array<SlimHackerNewsItem>;
 }
 
-const Feed: React.VFC<Props> = ({ stories }) => {
+export function Feed({ stories }: Props) {
   return (
     <div className="my-2.5 space-y-2.5 px-2.5 py-1">
       {stories.map((story, index) => {
@@ -66,6 +65,4 @@ const Feed: React.VFC<Props> = ({ stories }) => {
       })}
     </div>
   );
-};
-
-export { Feed };
+}

@@ -1,38 +1,27 @@
-import {
-  RouteComponent,
-  LoaderFunction,
-  MetaFunction,
-  useLoaderData,
-} from "remix";
-import { fetcher } from "@mcansh/fetcher";
-
 import { SlimHackerNewsItem } from "~/types";
 import { HackerNewsItem } from "~/types/hackernews";
 import { Feed } from "~/components/feed";
 import { api } from "~/lib/api";
+import { MetaFunction } from "@remix-run/cloudflare";
+import { useLoaderData } from "@remix-run/react";
 
 interface RouteData {
   stories: SlimHackerNewsItem[];
 }
 
-const loader: LoaderFunction = async () => {
+export async function loader() {
   let stories = await api("/newstories.json");
 
-  let result: RouteData = {
-    stories,
-  };
+  let result: RouteData = { stories };
 
   return result;
+}
+
+export const meta: MetaFunction = () => {
+  return { title: "New Links | Remix Hacker News" };
 };
 
-const meta: MetaFunction = () => ({
-  title: "New Links | Remix Hacker News",
-});
-
-const NewestPage: RouteComponent = () => {
-  const data = useLoaderData<RouteData>();
+export default function NewestPage() {
+  const data = useLoaderData<typeof loader>();
   return <Feed stories={data.stories} />;
-};
-
-export default NewestPage;
-export { loader, meta };
+}

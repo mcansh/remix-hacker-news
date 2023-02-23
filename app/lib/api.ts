@@ -10,7 +10,7 @@ function formatPath(string: string) {
   return "/" + parts.filter(Boolean).join("/");
 }
 
-async function api(endpoint: string) {
+export async function api(endpoint: string) {
   let path = formatPath(endpoint);
   let url = new URL(path, "https://hacker-news.firebaseio.com");
 
@@ -40,5 +40,3 @@ async function api(endpoint: string) {
 
   return slimData;
 }
-
-export { api };

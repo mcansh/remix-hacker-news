@@ -1,21 +1,27 @@
 import * as React from "react";
-import type {
-  ErrorBoundaryComponent,
-  LinksFunction,
-  RouteComponent,
-} from "remix";
-import { Meta, Links, Scripts, LiveReload, useCatch } from "remix";
-import { Outlet } from "react-router-dom";
+import { LinksFunction } from "@remix-run/cloudflare";
+import {
+  Links,
+  LiveReload,
+  Meta,
+  Outlet,
+  Scripts,
+  ScrollRestoration,
+} from "@remix-run/react";
 
-import tailwindUrl from "./styles/tailwind.css";
+import tailwindUrl from "tailwindcss/tailwind.css";
 import { Header } from "./components/header";
 
-let links: LinksFunction = () => {
-  return [{ rel: "stylesheet", href: tailwindUrl }];
+export let links: LinksFunction = () => {
+  return [
+    { rel: "preload", href: tailwindUrl, as: "style" },
+    { rel: "stylesheet", href: tailwindUrl },
+  ];
 };
 
 interface DocumentProps {
   title?: string;
+  children: React.ReactNode;
 }
 
 const Document: React.FC<DocumentProps> = ({ children, title }) => {
@@ -36,54 +42,16 @@ const Document: React.FC<DocumentProps> = ({ children, title }) => {
         </div>
         <Scripts />
         {process.env.NODE_ENV === "development" && <LiveReload />}
+        <ScrollRestoration />
       </body>
     </html>
   );
 };
 
-const App: RouteComponent = () => {
+export default function App() {
   return (
     <Document>
       <Outlet />
     </Document>
   );
-};
-
-const CatchBoundary: React.VFC = () => {
-  let caught = useCatch();
-
-  switch (caught.status) {
-    case 401:
-    case 404:
-      return (
-        <Document title={`${caught.status} ${caught.statusText}`}>
-          <h1>
-            {caught.status} {caught.statusText}
-          </h1>
-        </Document>
-      );
-
-    default:
-      throw new Error(
-        `Unexpected caught response with status: ${caught.status}`
-      );
-  }
-};
-
-const ErrorBoundary: ErrorBoundaryComponent = ({ error }) => {
-  console.error(error);
-
-  return (
-    <Document title="Uh-oh!">
-      <h1>App Error</h1>
-      <pre>{error.message}</pre>
-      <p>
-        Replace this UI with what you want users to see when your app throws
-        uncaught errors.
-      </p>
-    </Document>
-  );
-};
-
-export default App;
-export { links, CatchBoundary, ErrorBoundary };
+}

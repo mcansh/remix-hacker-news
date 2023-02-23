@@ -1,93 +1,92 @@
 import clsx from "clsx";
-import * as React from "react";
-import { NavLink } from "remix";
+import { NavLink } from "@remix-run/react";
 
-import logoUrl from "../../public/favicon.png";
+import logoUrl from "~/logo.png";
 
-const Header: React.VFC = () => (
-  <header className="flex flex-col items-center p-1 sm:flex-row bg-primary">
-    <NavLink
-      to="/"
-      className="flex items-center mb-2.5 sm:mb-0 mr-2.5 flex-shrink-0"
-    >
-      <img height={20} width={20} src={logoUrl} alt="remix logo" />
-      <h1 className="ml-1 font-bold">Hacker Remix</h1>
-    </NavLink>
-    <nav className="flex justify-between w-full">
-      <ul className="flex items-center">
-        <li>
+export function Header() {
+  return (
+    <header className="flex flex-col items-center p-1 sm:flex-row bg-primary">
+      <NavLink
+        to="/"
+        className="flex items-center mb-2.5 sm:mb-0 mr-2.5 flex-shrink-0"
+      >
+        <img height={20} width={20} src={logoUrl} alt="remix logo" />
+        <h1 className="ml-1 font-bold">Hacker Remix</h1>
+      </NavLink>
+      <nav className="flex justify-between w-full">
+        <ul className="flex items-center">
+          <li>
+            <NavLink
+              className={({ isActive }) =>
+                clsx("px-2.5", isActive ? "text-white" : "hover:text-white")
+              }
+              to="/newest"
+            >
+              new
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
+              className={({ isActive }) =>
+                clsx("px-2.5", isActive ? "text-white" : "hover:text-white")
+              }
+              to="/front"
+            >
+              past
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
+              className={({ isActive }) =>
+                clsx("px-2.5", isActive ? "text-white" : "hover:text-white")
+              }
+              to="/ask"
+            >
+              ask
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
+              className={({ isActive }) =>
+                clsx("px-2.5", isActive ? "text-white" : "hover:text-white")
+              }
+              to="/show"
+            >
+              show
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
+              className={({ isActive }) =>
+                clsx("px-2.5", isActive ? "text-white" : "hover:text-white")
+              }
+              to="/jobs"
+            >
+              jobs
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
+              className={({ isActive }) =>
+                clsx("px-2.5", isActive ? "text-white" : "hover:text-white")
+              }
+              to="/submit"
+            >
+              submit
+            </NavLink>
+          </li>
+        </ul>
+        <div>
           <NavLink
             className={({ isActive }) =>
               clsx("px-2.5", isActive ? "text-white" : "hover:text-white")
             }
-            to="/newest"
+            to="/login"
           >
-            new
+            login
           </NavLink>
-        </li>
-        <li>
-          <NavLink
-            className={({ isActive }) =>
-              clsx("px-2.5", isActive ? "text-white" : "hover:text-white")
-            }
-            to="/front"
-          >
-            past
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
-            className={({ isActive }) =>
-              clsx("px-2.5", isActive ? "text-white" : "hover:text-white")
-            }
-            to="/ask"
-          >
-            ask
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
-            className={({ isActive }) =>
-              clsx("px-2.5", isActive ? "text-white" : "hover:text-white")
-            }
-            to="/show"
-          >
-            show
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
-            className={({ isActive }) =>
-              clsx("px-2.5", isActive ? "text-white" : "hover:text-white")
-            }
-            to="/jobs"
-          >
-            jobs
-          </NavLink>
-        </li>
-        <li>
-          <NavLink
-            className={({ isActive }) =>
-              clsx("px-2.5", isActive ? "text-white" : "hover:text-white")
-            }
-            to="/submit"
-          >
-            submit
-          </NavLink>
-        </li>
-      </ul>
-      <div>
-        <NavLink
-          className={({ isActive }) =>
-            clsx("px-2.5", isActive ? "text-white" : "hover:text-white")
-          }
-          to="/login"
-        >
-          login
-        </NavLink>
-      </div>
-    </nav>
-  </header>
-);
-
-export { Header };
+        </div>
+      </nav>
+    </header>
+  );
+}
