@@ -14,31 +14,33 @@ export function Feed({ stories }: Props) {
 
         return (
           <div key={story.id} className="flex space-x-2.5">
-            <span className="text-neutral-400 text-sm pt-0.5">
-              {index + 1}.
-            </span>
+            <span className="text-sm">{index + 1}.</span>
             <div>
               <div>
                 {story.url ? (
-                  <a className="inline-block mr-2" href={story.url}>
+                  <a className="inline-block mr-2 text-black" href={story.url}>
                     {story.title}
                   </a>
                 ) : (
                   <Link
                     prefetch="intent"
-                    className="inline-block mr-2"
+                    className="inline-block mr-2 text-black"
                     to={`/item/${story.id}`}
                   >
                     {story.title}
                   </Link>
                 )}
                 {story.url && (
-                  <span className="text-sm hover:underline text-neutral-400">
-                    {new URL(story.url).hostname}
-                  </span>
+                  <>
+                    (
+                    <span className="text-sm hover:underline">
+                      {new URL(story.url).hostname}
+                    </span>
+                    )
+                  </>
                 )}
               </div>
-              <div className="text-sm text-neutral-400">
+              <div className="text-subtext text-neutral-400">
                 {story.score} points by{" "}
                 <Link
                   prefetch="intent"
@@ -52,9 +54,11 @@ export function Feed({ stories }: Props) {
                 <Link
                   prefetch="intent"
                   className="hover:underline"
-                  to={`item/${story.id}`}
+                  to={`/item/${story.id}`}
                 >
-                  {story.descendants} {commentText}
+                  {story.descendants === 0
+                    ? "discuss"
+                    : `${story.descendants} ${commentText}`}
                 </Link>
               </div>
             </div>

@@ -63,11 +63,12 @@ export const api = {
     let about = user.about ? sanitizeHtml(user.about) : "";
 
     let data = await Promise.all(
-      user.submitted
-        .slice(0, 29)
-        .map((id) =>
-          zetch(hacker_news_item_schema, get_url(`/item/${id}.json`).toString())
-        )
+      user.submitted.slice(0, 29).map((id) => {
+        return zetch(
+          hacker_news_item_schema,
+          get_url(`/item/${id}.json`).toString()
+        );
+      })
     );
 
     let posts = data.map((item) => {
@@ -100,26 +101,7 @@ export const api = {
       get_url(`/item/${id}.json`).toString()
     );
 
-    let kids = story.kids
-      ? await Promise.all(
-          story.kids?.map(async (kid) => {
-            let result = await zetch(
-              hacker_news_comment_schema,
-              get_url(`/item/${kid}.json`).toString()
-            );
-
-            return {
-              ...result,
-              text: result.text ? sanitizeHtml(result.text) : undefined,
-              relative_date: timeago.ago(result.time * 1000),
-            };
-          })
-        ).then((data) => {
-          return data.filter(
-            (item) => item.by != undefined && item.text != undefined
-          );
-        })
-      : [];
+    let kids = story.kids ? await recursively_get_kids(story.kids) : [];
 
     return {
       ...story,
@@ -132,6 +114,10 @@ export const api = {
 
 export type HackerNewsUser = Awaited<ReturnType<typeof api.get_user>>;
 export type HackerNewsItem = Awaited<ReturnType<typeof api.get_posts>>[number];
+export type HackerNewsComment = z.infer<typeof hacker_news_comment_schema>;
+export type HackerNewsFullComment = Omit<HackerNewsComment, "kids"> & {
+  kids: Array<HackerNewsFullComment> | undefined;
+} & { relative_date: string };
 
 export function get_data_from_post(
   item: z.infer<typeof hacker_news_item_schema>
@@ -145,4 +131,43 @@ export function get_data_from_post(
     by: item.by,
     descendants: item.descendants,
   };
+}
+
+async function get_comment(id: number) {
+  let item = await zetch(
+    hacker_news_comment_schema,
+    get_url(`/item/${id}.json`).toString()
+  );
+
+  return {
+    ...item,
+    text: item.text ? sanitizeHtml(item.text) : undefined,
+    relative_date: timeago.ago(item.time * 1000),
+  };
+}
+
+async function recursively_get_kids(
+  commentIds: Array<number>
+): Promise<Array<HackerNewsFullComment>> {
+  let commentsToFetch = commentIds.slice(0, 4);
+  let comments = await Promise.all(commentsToFetch.map(get_comment));
+
+  let kids = await Promise.all(
+    comments.map(async (comment) => {
+      if (comment.kids) {
+        return recursively_get_kids(comment.kids);
+      }
+    })
+  );
+
+  return comments.map((comment, i) => {
+    return {
+      ...comment,
+      kids: kids[i]?.filter((item) => !is_sus_comment(item)),
+    };
+  });
+}
+
+function is_sus_comment(item: HackerNewsFullComment) {
+  return item.by == undefined || item.text == undefined;
 }

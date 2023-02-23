@@ -35,8 +35,8 @@ const Document: React.FC<DocumentProps> = ({ children, title }) => {
         <Meta />
         <Links />
       </head>
-      <body>
-        <div className="max-w-6xl w-full mx-auto bg-white sm:mt-2.5">
+      <body className="text-base text-default">
+        <div className="md:w-[85%] md:min-w-[796px] w-full mx-auto bg-bg sm:mt-2.5">
           <Header />
           {children}
         </div>
