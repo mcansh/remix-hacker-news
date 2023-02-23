@@ -1,17 +1,14 @@
 import { Link } from "@remix-run/react";
-import * as timeago from "time-ago";
-
-import { SlimHackerNewsItem } from "~/types";
+import { HackerNewsItem } from "~/lib/api";
 
 interface Props {
-  stories: Array<SlimHackerNewsItem>;
+  stories: Array<HackerNewsItem>;
 }
 
 export function Feed({ stories }: Props) {
   return (
     <div className="my-2.5 space-y-2.5 px-2.5 py-1">
       {stories.map((story, index) => {
-        let formatted = timeago.ago(story.time * 1000);
         let commentText =
           story.descendants && story.descendants === 1 ? "comment" : "comments";
 
@@ -50,7 +47,8 @@ export function Feed({ stories }: Props) {
                 >
                   {story.by}
                 </Link>{" "}
-                {formatted} |{" "}
+                {story.relative_date}
+                {" | "}
                 <Link
                   prefetch="intent"
                   className="hover:underline"

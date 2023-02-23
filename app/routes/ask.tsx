@@ -1,19 +1,11 @@
-import { SlimHackerNewsItem } from "~/types";
 import { Feed } from "~/components/feed";
 import { api } from "~/lib/api";
-import { MetaFunction } from "@remix-run/cloudflare";
+import { json, MetaFunction } from "@remix-run/cloudflare";
 import { useLoaderData } from "@remix-run/react";
 
-interface RouteData {
-  stories: SlimHackerNewsItem[];
-}
-
 export async function loader() {
-  let stories = await api("/askstories.json");
-
-  let result: RouteData = { stories };
-
-  return result;
+  let stories = await api.get_posts("/askstories.json");
+  return json({ stories });
 }
 
 export const meta: MetaFunction = () => {

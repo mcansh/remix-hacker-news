@@ -1,27 +1,15 @@
-import { fetcher } from "@mcansh/fetcher";
-import sanitizeHtml from "sanitize-html";
-
-import { HackerNewsUser } from "~/types/hackernews";
 import { format } from "date-fns";
-import { DataFunctionArgs, MetaFunction } from "@remix-run/cloudflare";
+import { DataFunctionArgs, json, MetaFunction } from "@remix-run/cloudflare";
 import { useLoaderData } from "@remix-run/react";
-
-interface RouteData {
-  user: HackerNewsUser;
-}
+import { api } from "~/lib/api";
 
 export async function loader({ params }: DataFunctionArgs) {
-  let user = await fetcher<HackerNewsUser>(
-    `https://hacker-news.firebaseio.com/v0/user/${params.username}.json?print=pretty`
-  );
+  if (!params.username) {
+    throw new Response("Not Found", { status: 404 });
+  }
 
-  let about = user.about ? sanitizeHtml(user.about) : "";
-
-  let result: RouteData = {
-    user: { ...user, about },
-  };
-
-  return result;
+  let user = await api.get_user(params.username);
+  return json({ user });
 }
 
 export const meta: MetaFunction = () => {
