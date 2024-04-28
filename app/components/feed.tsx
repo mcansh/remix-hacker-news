@@ -1,5 +1,5 @@
 import { Link } from "@remix-run/react";
-import { HackerNewsItem } from "~/lib/api";
+import { HackerNewsItem } from "~/.server/api";
 
 interface Props {
   stories: Array<HackerNewsItem>;

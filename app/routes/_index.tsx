@@ -1,18 +1,18 @@
-import { Feed } from "~/components/feed";
-import { api } from "~/lib/api";
-import { json, MetaFunction } from "@remix-run/cloudflare";
+import type { MetaFunction } from "@remix-run/cloudflare";
 import { useLoaderData } from "@remix-run/react";
+import { Feed } from "~/components/feed";
+import { api } from "~/.server/api";
 
 export let meta: MetaFunction = () => {
-  return {
-    title: "Remix Hacker News",
-    description: "Hacker News made with Remix.run",
-  };
+  return [
+    { title: "Remix Hacker News" },
+    { name: "description", content: "Hacker News made with Remix.run" },
+  ];
 };
 
 export async function loader() {
   let stories = await api.get_posts("/topstories.json");
-  return json({ stories });
+  return { stories };
 }
 
 export default function IndexPage() {

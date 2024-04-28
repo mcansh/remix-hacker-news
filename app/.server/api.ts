@@ -13,7 +13,7 @@ let hacker_news_item_schema = z.object({
   score: z.number(),
   time: z.number(),
   title: z.string(),
-  type: z.enum(["job", "story", "poll", "pollopt"]),
+  type: z.enum(["job", "story", "poll", "pollopt", "comment"]),
   url: z.string().optional(),
   text: z.string().optional(),
 });
@@ -59,35 +59,22 @@ export const api = {
   async get_user(username: string) {
     let url = get_url(`/user/${username}.json`);
     url.searchParams.set("print", "pretty");
-    let user = await zetch(hacker_news_user_schema, url.toString());
+    let user = await zetch(hacker_news_user_schema, url);
     let about = user.about ? sanitizeHtml(user.about) : "";
 
-    let data = await Promise.all(
-      user.submitted.slice(0, 29).map((id) => {
-        return zetch(
-          hacker_news_item_schema,
-          get_url(`/item/${id}.json`).toString()
-        );
-      })
-    );
-
-    let posts = data.map((item) => {
-      return get_data_from_post(item);
-    });
-
-    return { user: { ...user, about }, posts };
+    return { user: { ...user, about }, posts: [] };
   },
 
   async get_posts(endpoint: Endpoint) {
     let url = get_url(endpoint);
-    let ids = await zetch(z.array(z.number()), url.toString());
+    let ids = await zetch(z.array(z.number()), url);
 
     let critical_ids = ids.slice(0, 29);
 
     let data = await Promise.all(
       critical_ids.map((id) =>
-        zetch(hacker_news_item_schema, get_url(`/item/${id}.json`).toString())
-      )
+        zetch(hacker_news_item_schema, get_url(`/item/${id}.json`)),
+      ),
     );
 
     return data.map((item) => {
@@ -98,7 +85,7 @@ export const api = {
   async get_post(id: number) {
     let story = await zetch(
       hacker_news_item_schema,
-      get_url(`/item/${id}.json`).toString()
+      get_url(`/item/${id}.json`),
     );
 
     let kids = story.kids ? await recursively_get_kids(story.kids) : [];
@@ -120,7 +107,7 @@ export type HackerNewsFullComment = Omit<HackerNewsComment, "kids"> & {
 } & { relative_date: string };
 
 export function get_data_from_post(
-  item: z.infer<typeof hacker_news_item_schema>
+  item: z.infer<typeof hacker_news_item_schema>,
 ) {
   return {
     id: item.id,
@@ -136,7 +123,7 @@ export function get_data_from_post(
 async function get_comment(id: number) {
   let item = await zetch(
     hacker_news_comment_schema,
-    get_url(`/item/${id}.json`).toString()
+    get_url(`/item/${id}.json`),
   );
 
   return {
@@ -147,7 +134,7 @@ async function get_comment(id: number) {
 }
 
 async function recursively_get_kids(
-  commentIds: Array<number>
+  commentIds: Array<number>,
 ): Promise<Array<HackerNewsFullComment>> {
   let commentsToFetch = commentIds.slice(0, 4);
   let comments = await Promise.all(commentsToFetch.map(get_comment));
@@ -157,7 +144,7 @@ async function recursively_get_kids(
       if (comment.kids) {
         return recursively_get_kids(comment.kids);
       }
-    })
+    }),
   );
 
   return comments.map((comment, i) => {
