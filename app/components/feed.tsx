@@ -18,13 +18,13 @@ export function Feed({ stories }: Props) {
             <div>
               <div>
                 {story.url ? (
-                  <a className="inline-block mr-2 text-black" href={story.url}>
+                  <a className="mr-2 inline-block text-black" href={story.url}>
                     {story.title}
                   </a>
                 ) : (
                   <Link
                     prefetch="intent"
-                    className="inline-block mr-2 text-black"
+                    className="mr-2 inline-block text-black"
                     to={`/item/${story.id}`}
                   >
                     {story.title}
@@ -40,7 +40,7 @@ export function Feed({ stories }: Props) {
                   </>
                 )}
               </div>
-              <div className="text-subtext text-neutral-400">
+              <div className="text-neutral-400 text-subtext">
                 {story.score} points by{" "}
                 <Link
                   prefetch="intent"
