@@ -1,8 +1,6 @@
 import { LoaderFunctionArgs } from "@remix-run/cloudflare";
+import { redirectHelper } from "~/.server/utils";
 
 export function loader({ response }: LoaderFunctionArgs) {
-  if (!response) throw new Error("No response object");
-  response.status = 302;
-  response.headers.set("Location", "/");
-  return response;
+  throw redirectHelper(response, "/");
 }

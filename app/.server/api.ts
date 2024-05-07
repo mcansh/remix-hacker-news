@@ -47,7 +47,7 @@ let base_url = "https://hacker-news.firebaseio.com";
 
 function formatPath(string: string) {
   let parts = string.split("/");
-  if (parts[0] !== "v0") parts.unshift("v0");
+  if (parts.at(0) !== "v0") parts.unshift("v0");
   return "/" + parts.filter(Boolean).join("/");
 }
 
@@ -61,7 +61,6 @@ export const api = {
     url.searchParams.set("print", "pretty");
     let user = await zetch(hacker_news_user_schema, url);
     let about = user.about ? sanitizeHtml(user.about) : "";
-
     return { user: { ...user, about }, posts: [] };
   },
 
@@ -72,9 +71,9 @@ export const api = {
     let critical_ids = ids.slice(0, 29);
 
     let data = await Promise.all(
-      critical_ids.map((id) =>
-        zetch(hacker_news_item_schema, get_url(`/item/${id}.json`)),
-      ),
+      critical_ids.map((id) => {
+        return zetch(hacker_news_item_schema, get_url(`/item/${id}.json`));
+      }),
     );
 
     return data.map((item) => {
