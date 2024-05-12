@@ -57,14 +57,10 @@ function Comments({
   depth?: number;
 }) {
   if (!comments || comments.length === 0) return null;
+  const marginLeft = depth === 1 ? 0 : depth * 4;
 
   return (
-    <div
-      className="mt-4 space-y-4"
-      style={{
-        marginLeft: `${depth * 10}px`,
-      }}
-    >
+    <div className="mt-4 space-y-4" style={{ marginLeft }}>
       {comments.map((comment) => {
         return (
           <div key={comment.id}>
