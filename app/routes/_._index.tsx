@@ -16,17 +16,25 @@ export const meta: MetaFunction = () => {
   ];
 };
 
-export const loader = unstable_defineLoader(async ({ request }) => {
+export const loader = unstable_defineLoader(async ({ request, response }) => {
   let session = await sessionStorage.getSession(request.headers.get("Cookie"));
   let url = new URL(request.url);
 
-  let page = Number(url.searchParams.get("page")) || 1;
+  let pageParam = url.searchParams.get("page");
+
+  if (pageParam && pageParam === "1") {
+    response.status = 302;
+    response.headers.set("Location", "/");
+    throw response;
+  }
+
+  let page = Number(pageParam);
 
   let hidden = session.get("hidden") || [];
   const { has_more, stories } = await api.get_posts(
     "/topstories.json",
     hidden,
-    page,
+    page || 1,
   );
   return { stories, page, has_more };
 });
