@@ -40,7 +40,7 @@ export type Post = z.infer<typeof PostSchema> & {
   relative_date: string;
 };
 
-export type Feed = Array<Omit<Post, "text" | "kids">>;
+export type Feed = Array<Omit<Post, "text" | "kids"> & { number: number }>;
 
 type CommentNoKids = Omit<z.infer<typeof CommentSchema>, "kids">;
 
@@ -79,11 +79,24 @@ class Api {
     return { user: { ...user, about }, posts: [] };
   }
 
-  async get_posts(endpoint: Endpoint, hidden: Array<number>): Promise<Feed> {
+  async get_posts(
+    endpoint: Endpoint,
+    hidden: Array<number> = [],
+    page: number = 1,
+  ): Promise<{
+    stories: Feed;
+    has_more: boolean;
+  }> {
     const url = this.#get_url(endpoint);
     const ids = await zetch(z.array(z.number()), url);
 
-    const critical_ids = ids.filter((id) => !hidden.includes(id)).slice(0, 29);
+    let perPage = 30;
+    let start = (page - 1) * perPage;
+    let end = start + perPage;
+
+    const critical_ids = ids
+      .filter((id) => !hidden.includes(id))
+      .slice(start, end);
 
     const critical = await Promise.all(
       critical_ids.map((id) => {
@@ -91,19 +104,23 @@ class Api {
       }),
     );
 
-    return critical.map((item) => {
-      return {
-        id: item.id,
-        title: item.title,
-        url: item.url,
-        relative_date: timeago.ago(item.time * 1000),
-        type: item.type,
-        time: item.time,
-        score: item.score,
-        by: item.by,
-        descendants: item.descendants,
-      };
-    });
+    return {
+      has_more: ids.length > end,
+      stories: critical.map((item) => {
+        return {
+          number: (start += 1),
+          id: item.id,
+          title: item.title,
+          url: item.url,
+          relative_date: timeago.ago(item.time * 1000),
+          type: item.type,
+          time: item.time,
+          score: item.score,
+          by: item.by,
+          descendants: item.descendants,
+        };
+      }),
+    };
   }
 
   async get_post(id: number): Promise<Post> {

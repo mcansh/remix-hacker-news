@@ -5,7 +5,7 @@ import { Feed } from "~/components/feed";
 import { api } from "~/.server/api";
 
 export const loader = unstable_defineLoader(async () => {
-  const stories = await api.get_posts("/askstories.json");
+  const { stories } = await api.get_posts("/askstories.json");
   return { stories };
 });
 

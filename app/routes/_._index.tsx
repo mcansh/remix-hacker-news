@@ -18,9 +18,17 @@ export const meta: MetaFunction = () => {
 
 export const loader = unstable_defineLoader(async ({ request }) => {
   let session = await sessionStorage.getSession(request.headers.get("Cookie"));
+  let url = new URL(request.url);
+
+  let page = Number(url.searchParams.get("page")) || 1;
+
   let hidden = session.get("hidden") || [];
-  const stories = await api.get_posts("/topstories.json", hidden);
-  return { stories };
+  const { has_more, stories } = await api.get_posts(
+    "/topstories.json",
+    hidden,
+    page,
+  );
+  return { stories, page, has_more };
 });
 
 export const action = unstable_defineAction(async ({ request, response }) => {
@@ -60,5 +68,7 @@ export const action = unstable_defineAction(async ({ request, response }) => {
 
 export default function IndexPage() {
   const data = useLoaderData<typeof loader>();
-  return <Feed stories={data.stories} />;
+  return (
+    <Feed stories={data.stories} page={data.page} hasMore={data.has_more} />
+  );
 }

@@ -1,11 +1,19 @@
 import { Form, Link } from "@remix-run/react";
 import type { Feed } from "~/.server/api";
 
-interface Props {
-  stories: Feed;
-}
+type Props =
+  | {
+      stories: Feed;
+      hasMore?: never;
+      page?: never;
+    }
+  | {
+      hasMore: boolean;
+      page: number;
+      stories: Feed;
+    };
 
-export function Feed({ stories }: Props) {
+export function Feed({ hasMore, page, stories }: Props) {
   return (
     <div className="my-2.5 space-y-2.5 px-2.5 py-1">
       {stories.map((story, index) => {
@@ -15,7 +23,7 @@ export function Feed({ stories }: Props) {
 
         return (
           <div key={story.id} className="flex space-x-2.5">
-            <span className="text-sm">{index + 1}.</span>
+            <span className="text-sm">{story.number}.</span>
             <div>
               <div>
                 {story.url ? (
@@ -82,6 +90,16 @@ export function Feed({ stories }: Props) {
           </div>
         );
       })}
+
+      {hasMore ? (
+        <Link
+          prefetch="intent"
+          to={{ search: `?page=${page + 1}` }}
+          className="ml-8 mt-8 block text-black"
+        >
+          More
+        </Link>
+      ) : null}
     </div>
   );
 }
