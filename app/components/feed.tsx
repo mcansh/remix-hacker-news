@@ -1,8 +1,8 @@
-import { Link } from "@remix-run/react";
-import type { Post } from "~/.server/api";
+import { Form, Link } from "@remix-run/react";
+import type { Feed } from "~/.server/api";
 
 interface Props {
-  stories: Array<Post>;
+  stories: Feed;
 }
 
 export function Feed({ stories }: Props) {
@@ -11,6 +11,7 @@ export function Feed({ stories }: Props) {
       {stories.map((story, index) => {
         const commentText =
           story.descendants && story.descendants === 1 ? "comment" : "comments";
+        let pointsText = story.score === 1 ? "point" : "points";
 
         return (
           <div key={story.id} className="flex space-x-2.5">
@@ -41,7 +42,7 @@ export function Feed({ stories }: Props) {
                 ) : null}
               </div>
               <div className="text-neutral-400 text-subtext">
-                {story.score} points by{" "}
+                {story.score} {pointsText} by{" "}
                 <Link
                   prefetch="intent"
                   className="hover:underline"
@@ -51,15 +52,29 @@ export function Feed({ stories }: Props) {
                 </Link>{" "}
                 {story.relative_date}
                 {" | "}
-                <Link
-                  prefetch="intent"
-                  className="hover:underline"
-                  to={`/item/${story.id}`}
-                >
-                  {story.descendants === 0
-                    ? "discuss"
-                    : `${story.descendants} ${commentText}`}
-                </Link>
+                {story.type === "job" ? (
+                  <Form method="post" className="inline">
+                    <input type="hidden" name="id" value={story.id} />
+                    <button
+                      className="text-neutral-400 hover:underline"
+                      name="intent"
+                      value="hide"
+                      type="submit"
+                    >
+                      hide
+                    </button>
+                  </Form>
+                ) : (
+                  <Link
+                    prefetch="intent"
+                    className="hover:underline"
+                    to={`/item/${story.id}`}
+                  >
+                    {story.descendants === 0
+                      ? "discuss"
+                      : `${story.descendants} ${commentText}`}
+                  </Link>
+                )}
               </div>
             </div>
           </div>

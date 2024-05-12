@@ -34,14 +34,15 @@ export default function ItemPage() {
     data.story.descendants && data.story.descendants === 1
       ? "comment"
       : "comments";
+  const pointsText = data.story.score === 1 ? "point" : "points";
 
   return (
     <div className="px-4 py-2">
       <h1 className="text-black">{data.story.title}</h1>
 
       <p className="text-xs">
-        {data.story.score} points by {data.story.by} {data.story.relative_date}{" "}
-        | {data.story.descendants} {commentText}
+        {data.story.score} {pointsText} by {data.story.by}{" "}
+        {data.story.relative_date} | {data.story.descendants} {commentText}
       </p>
 
       {data.story.text ? (
