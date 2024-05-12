@@ -1,33 +1,35 @@
-import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/cloudflare";
+import { unstable_defineLoader } from "@remix-run/cloudflare";
 import { useLoaderData } from "@remix-run/react";
+import type { MetaArgs_SingleFetch } from "@remix-run/react";
 import { responseHelper } from "~/.server/utils";
+import type { HackerNewsFullComment } from "~/.server/api";
 import { api } from "~/.server/api";
 
-export async function loader({ params, response }: LoaderFunctionArgs) {
-  let id = Number(params.id);
+export const loader = unstable_defineLoader(async ({ params, response }) => {
+  const id = Number(params.id);
   if (isNaN(id)) throw responseHelper(response, { status: 404 });
-  let story = await api.get_post(id);
-  let meta = [
+  const story = await api.get_post(id);
+  const meta = [
     { title: `${story.title} | Remix Hacker News` },
     { name: "description", content: "Hacker News made with Remix.run" },
   ];
   return { story, meta };
+});
+
+export function meta({ data }: MetaArgs_SingleFetch<typeof loader>) {
+  return data?.meta ?? [];
 }
 
-export let meta: MetaFunction<typeof loader> = ({ data }) => {
-  return data?.meta ?? [];
-};
-
 export default function ItemPage() {
-  let data = useLoaderData<typeof loader>();
+  const data = useLoaderData<typeof loader>();
 
-  let commentText =
+  const commentText =
     data.story.descendants && data.story.descendants === 1
       ? "comment"
       : "comments";
 
   return (
-    <div className="py-2 px-4">
+    <div className="px-4 py-2">
       <h1 className="text-black">{data.story.title}</h1>
 
       <p className="text-xs">
@@ -51,7 +53,7 @@ function Comments({
   comments,
   depth = 1,
 }: {
-  comments: Array<any> | undefined;
+  comments: Array<HackerNewsFullComment> | undefined;
   depth?: number;
 }) {
   if (!comments || comments.length === 0) return null;
@@ -69,10 +71,12 @@ function Comments({
             <p>
               {comment.by} {comment.relative_date}
             </p>
-            <div
-              className="text-black"
-              dangerouslySetInnerHTML={{ __html: comment.text }}
-            />
+            {comment.text ? (
+              <div
+                className="text-black"
+                dangerouslySetInnerHTML={{ __html: comment.text }}
+              />
+            ) : null}
             {comment.kids == undefined || comment.kids.length === 0 ? null : (
               <Comments comments={comment.kids} depth={depth + 1} />
             )}

@@ -3,9 +3,9 @@ import { z } from "zod";
 import { createZodFetcher } from "zod-fetch";
 import sanitizeHtml from "sanitize-html";
 
-let zetch = createZodFetcher();
+const zetch = createZodFetcher();
 
-let hacker_news_item_schema = z.object({
+const hacker_news_item_schema = z.object({
   by: z.string(),
   descendants: z.number().optional(),
   id: z.number(),
@@ -18,7 +18,7 @@ let hacker_news_item_schema = z.object({
   text: z.string().optional(),
 });
 
-let hacker_news_user_schema = z.object({
+const hacker_news_user_schema = z.object({
   id: z.string(),
   created: z.number(),
   karma: z.number(),
@@ -26,7 +26,7 @@ let hacker_news_user_schema = z.object({
   submitted: z.array(z.number()),
 });
 
-let hacker_news_comment_schema = z.object({
+const hacker_news_comment_schema = z.object({
   by: z.string().optional(),
   id: z.number(),
   kids: z.array(z.number()).optional(),
@@ -43,10 +43,10 @@ type Endpoint =
   | "/newstories.json"
   | "/showstories.json";
 
-let base_url = "https://hacker-news.firebaseio.com";
+const base_url = "https://hacker-news.firebaseio.com";
 
 function formatPath(string: string) {
-  let parts = string.split("/");
+  const parts = string.split("/");
   if (parts.at(0) !== "v0") parts.unshift("v0");
   return "/" + parts.filter(Boolean).join("/");
 }
@@ -57,20 +57,20 @@ function get_url(path: string) {
 
 export const api = {
   async get_user(username: string) {
-    let url = get_url(`/user/${username}.json`);
+    const url = get_url(`/user/${username}.json`);
     url.searchParams.set("print", "pretty");
-    let user = await zetch(hacker_news_user_schema, url);
-    let about = user.about ? sanitizeHtml(user.about) : "";
+    const user = await zetch(hacker_news_user_schema, url);
+    const about = user.about ? sanitizeHtml(user.about) : "";
     return { user: { ...user, about }, posts: [] };
   },
 
   async get_posts(endpoint: Endpoint) {
-    let url = get_url(endpoint);
-    let ids = await zetch(z.array(z.number()), url);
+    const url = get_url(endpoint);
+    const ids = await zetch(z.array(z.number()), url);
 
-    let critical_ids = ids.slice(0, 29);
+    const critical_ids = ids.slice(0, 29);
 
-    let data = await Promise.all(
+    const data = await Promise.all(
       critical_ids.map((id) => {
         return zetch(hacker_news_item_schema, get_url(`/item/${id}.json`));
       }),
@@ -82,12 +82,12 @@ export const api = {
   },
 
   async get_post(id: number) {
-    let story = await zetch(
+    const story = await zetch(
       hacker_news_item_schema,
       get_url(`/item/${id}.json`),
     );
 
-    let kids = story.kids ? await recursively_get_kids(story.kids) : [];
+    const kids = story.kids ? await recursively_get_kids(story.kids) : [];
 
     return {
       ...story,
@@ -120,7 +120,7 @@ export function get_data_from_post(
 }
 
 async function get_comment(id: number) {
-  let item = await zetch(
+  const item = await zetch(
     hacker_news_comment_schema,
     get_url(`/item/${id}.json`),
   );
@@ -135,10 +135,10 @@ async function get_comment(id: number) {
 async function recursively_get_kids(
   commentIds: Array<number>,
 ): Promise<Array<HackerNewsFullComment>> {
-  let commentsToFetch = commentIds.slice(0, 4);
-  let comments = await Promise.all(commentsToFetch.map(get_comment));
+  const commentsToFetch = commentIds.slice(0, 4);
+  const comments = await Promise.all(commentsToFetch.map(get_comment));
 
-  let kids = await Promise.all(
+  const kids = await Promise.all(
     comments.map(async (comment) => {
       if (comment.kids) {
         return recursively_get_kids(comment.kids);

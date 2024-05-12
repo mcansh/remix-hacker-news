@@ -3,7 +3,7 @@ import { Link, NavLink } from "@remix-run/react";
 
 import logoUrl from "~/logo.png";
 
-let links = [
+const links = [
   { to: "/newest", text: "new" },
   { to: "/front", text: "past" },
   { to: "/ask", text: "ask" },

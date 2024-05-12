@@ -1,22 +1,23 @@
 import { format } from "date-fns";
-import type { LoaderFunctionArgs, MetaFunction } from "@remix-run/cloudflare";
+import { unstable_defineLoader } from "@remix-run/cloudflare";
+import type { MetaArgs_SingleFetch } from "@remix-run/react";
 import { useLoaderData } from "@remix-run/react";
 import { api } from "~/.server/api";
 import { responseHelper } from "~/.server/utils";
 
-export async function loader({ params, response }: LoaderFunctionArgs) {
+export const loader = unstable_defineLoader(async ({ params, response }) => {
   if (!params.username) throw responseHelper(response, { status: 404 });
-  let { user } = await api.get_user(params.username);
-  let meta = [
+  const { user } = await api.get_user(params.username);
+  const meta = [
     { title: `${user.id} | Remix Hacker News` },
     { name: "description", content: "Hacker News made with Remix.run" },
   ];
   return { user, meta };
-}
+});
 
-export const meta: MetaFunction<typeof loader> = ({ data }) => {
+export function meta({ data }: MetaArgs_SingleFetch<typeof loader>) {
   return data?.meta ?? [];
-};
+}
 
 export default function NewestPage() {
   const data = useLoaderData<typeof loader>();

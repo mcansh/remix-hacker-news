@@ -1,5 +1,5 @@
 import { Link } from "@remix-run/react";
-import { HackerNewsItem } from "~/.server/api";
+import type { HackerNewsItem } from "~/.server/api";
 
 interface Props {
   stories: Array<HackerNewsItem>;
@@ -9,7 +9,7 @@ export function Feed({ stories }: Props) {
   return (
     <div className="my-2.5 space-y-2.5 px-2.5 py-1">
       {stories.map((story, index) => {
-        let commentText =
+        const commentText =
           story.descendants && story.descendants === 1 ? "comment" : "comments";
 
         return (

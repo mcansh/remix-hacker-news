@@ -1,12 +1,13 @@
 import type { MetaFunction } from "@remix-run/cloudflare";
+import { unstable_defineLoader } from "@remix-run/cloudflare";
 import { useLoaderData } from "@remix-run/react";
 import { api } from "~/.server/api";
 import { Feed } from "~/components/feed";
 
-export async function loader() {
-  let stories = await api.get_posts("/newstories.json");
+export const loader = unstable_defineLoader(async () => {
+  const stories = await api.get_posts("/newstories.json");
   return { stories };
-}
+});
 
 export const meta: MetaFunction = () => {
   return [

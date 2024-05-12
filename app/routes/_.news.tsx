@@ -1,6 +1,6 @@
-import { LoaderFunctionArgs } from "@remix-run/cloudflare";
+import { unstable_defineLoader } from "@remix-run/cloudflare";
 import { redirectHelper } from "~/.server/utils";
 
-export function loader({ response }: LoaderFunctionArgs) {
+export const loader = unstable_defineLoader(async ({ response }) => {
   throw redirectHelper(response, "/");
-}
+});
