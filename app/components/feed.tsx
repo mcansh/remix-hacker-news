@@ -52,29 +52,31 @@ export function Feed({ stories }: Props) {
                 </Link>{" "}
                 {story.relative_date}
                 {" | "}
-                {story.type === "job" ? (
-                  <Form method="post" className="inline">
-                    <input type="hidden" name="id" value={story.id} />
-                    <button
-                      className="text-neutral-400 hover:underline"
-                      name="intent"
-                      value="hide"
-                      type="submit"
-                    >
-                      hide
-                    </button>
-                  </Form>
-                ) : (
-                  <Link
-                    prefetch="intent"
-                    className="hover:underline"
-                    to={`/item/${story.id}`}
+                <Form method="post" className="inline">
+                  <input type="hidden" name="id" value={story.id} />
+                  <button
+                    className="text-neutral-400 hover:underline"
+                    name="intent"
+                    value="hide"
+                    type="submit"
                   >
-                    {story.descendants === 0
-                      ? "discuss"
-                      : `${story.descendants} ${commentText}`}
-                  </Link>
-                )}
+                    hide
+                  </button>
+                </Form>
+                {story.descendants ? (
+                  <>
+                    {" | "}
+                    <Link
+                      prefetch="intent"
+                      className="hover:underline"
+                      to={`/item/${story.id}`}
+                    >
+                      {story.descendants === 0
+                        ? "discuss"
+                        : `${story.descendants} ${commentText}`}
+                    </Link>
+                  </>
+                ) : null}
               </div>
             </div>
           </div>

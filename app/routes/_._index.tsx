@@ -1,8 +1,13 @@
 import type { MetaFunction } from "@remix-run/cloudflare";
-import { unstable_defineLoader } from "@remix-run/cloudflare";
+import {
+  unstable_defineAction,
+  unstable_defineLoader,
+} from "@remix-run/cloudflare";
 import { useLoaderData } from "@remix-run/react";
 import { Feed } from "~/components/feed";
 import { api } from "~/.server/api";
+import { sessionStorage } from "~/.server/session";
+import { z } from "zod";
 
 export const meta: MetaFunction = () => {
   return [
@@ -11,9 +16,46 @@ export const meta: MetaFunction = () => {
   ];
 };
 
-export const loader = unstable_defineLoader(async () => {
-  const stories = await api.get_posts("/topstories.json");
+export const loader = unstable_defineLoader(async ({ request }) => {
+  let session = await sessionStorage.getSession(request.headers.get("Cookie"));
+  let hidden = session.get("hidden") || [];
+  const stories = await api.get_posts("/topstories.json", hidden);
   return { stories };
+});
+
+export const action = unstable_defineAction(async ({ request, response }) => {
+  let session = await sessionStorage.getSession(request.headers.get("Cookie"));
+  let formData = await request.formData();
+  let intent = formData.get("intent");
+
+  let schema = z.object({
+    intent: z.string(),
+    id: z.coerce.number(),
+  });
+
+  let result = schema.parse(Object.fromEntries(formData.entries()));
+
+  switch (intent) {
+    case "hide": {
+      let hidden = session.get("hidden") || [];
+      let hiddenSet = new Set(hidden);
+      hiddenSet.add(result.id);
+      session.set("hidden", Array.from(hiddenSet));
+
+      response.status = 302;
+      response.headers.append(
+        "Set-Cookie",
+        await sessionStorage.commitSession(session),
+      );
+      response.headers.set("Location", "/");
+      throw response;
+    }
+    default: {
+      console.error("Invalid intent", intent);
+      response.status = 422;
+      throw response;
+    }
+  }
 });
 
 export default function IndexPage() {

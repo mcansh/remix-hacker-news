@@ -33,14 +33,16 @@ const CommentSchema = z.object({
   parent: z.number(),
   text: z.string().optional(),
   time: z.number(),
-  type: z.string(),
+  type: z.literal("comment"),
 });
-
-type CommentNoKids = Omit<z.infer<typeof CommentSchema>, "kids">;
 
 export type Post = z.infer<typeof PostSchema> & {
   relative_date: string;
 };
+
+export type Feed = Array<Omit<Post, "text" | "kids">>;
+
+type CommentNoKids = Omit<z.infer<typeof CommentSchema>, "kids">;
 
 export type Comment = CommentNoKids & {
   kids: Array<Comment>;
@@ -69,40 +71,42 @@ class Api {
     return "/" + parts.filter(Boolean).join("/");
   }
 
-  get_user = async (username: string) => {
+  async get_user(username: string) {
     const url = this.#get_url(`/user/${username}.json`);
     url.searchParams.set("print", "pretty");
     const user = await zetch(UserSchema, url);
     const about = user.about ? sanitizeHtml(user.about) : "";
     return { user: { ...user, about }, posts: [] };
-  };
+  }
 
-  get_posts = async (endpoint: Endpoint) => {
+  async get_posts(endpoint: Endpoint, hidden: Array<number>): Promise<Feed> {
     const url = this.#get_url(endpoint);
     const ids = await zetch(z.array(z.number()), url);
 
-    const critical_ids = ids.slice(0, 29);
+    const critical_ids = ids.filter((id) => !hidden.includes(id)).slice(0, 29);
 
-    const data = await Promise.all(
+    const critical = await Promise.all(
       critical_ids.map((id) => {
         return zetch(PostSchema, this.#get_url(`/item/${id}.json`));
       }),
     );
 
-    return data.map((item) => {
+    return critical.map((item) => {
       return {
         id: item.id,
         title: item.title,
         url: item.url,
         relative_date: timeago.ago(item.time * 1000),
+        type: item.type,
+        time: item.time,
         score: item.score,
         by: item.by,
         descendants: item.descendants,
       };
     });
-  };
+  }
 
-  get_post = async (id: number) => {
+  async get_post(id: number): Promise<Post> {
     const story = await zetch(PostSchema, this.#get_url(`/item/${id}.json`));
 
     return {
@@ -110,11 +114,9 @@ class Api {
       text: story.text ? sanitizeHtml(story.text) : undefined,
       relative_date: timeago.ago(story.time * 1000),
     };
-  };
+  }
 
-  get_comments = async (
-    kids: Array<number> | undefined,
-  ): Promise<Comment[]> => {
+  async get_comments(kids: Array<number> | undefined): Promise<Comment[]> {
     if (!kids) return [];
     const commentsToFetch = kids.slice(0, 4);
     const comments = await Promise.all(commentsToFetch.map(this.get_comment));
@@ -128,32 +130,25 @@ class Api {
     );
 
     return comments.map((comment, index) => {
-      let kids = childComments[index] || [];
+      const kids = childComments[index] || [];
       return {
         ...comment,
-        kids: this.#filter_sus_comments(kids),
+        kids: kids.filter((kid) => {
+          return kid.by != undefined || kid.text != undefined;
+        }),
       };
     });
-  };
+  }
 
-  get_comment = async (id: number) => {
-    let url = this.#get_url(`/item/${id}.json`);
-    console.log({ url: url.href });
-
+  async get_comment(id: number) {
+    const url = this.#get_url(`/item/${id}.json`);
     const item = await zetch(CommentSchema, url);
-
     return {
       ...item,
       text: item.text ? sanitizeHtml(item.text) : undefined,
       relative_date: timeago.ago(item.time * 1000),
     };
-  };
-
-  #filter_sus_comments = (comments: Array<Comment>) => {
-    return comments.filter((comment) => {
-      return comment.by != undefined || comment.text != undefined;
-    });
-  };
+  }
 }
 
 export const api = new Api();
