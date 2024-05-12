@@ -1,8 +1,8 @@
 import { Link } from "@remix-run/react";
-import type { HackerNewsItem } from "~/.server/api";
+import type { Post } from "~/.server/api";
 
 interface Props {
-  stories: Array<HackerNewsItem>;
+  stories: Array<Post>;
 }
 
 export function Feed({ stories }: Props) {
@@ -30,7 +30,7 @@ export function Feed({ stories }: Props) {
                     {story.title}
                   </Link>
                 )}
-                {story.url && (
+                {story.url ? (
                   <>
                     (
                     <span className="text-sm hover:underline">
@@ -38,7 +38,7 @@ export function Feed({ stories }: Props) {
                     </span>
                     )
                   </>
-                )}
+                ) : null}
               </div>
               <div className="text-neutral-400 text-subtext">
                 {story.score} points by{" "}

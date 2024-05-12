@@ -38,6 +38,10 @@ const CommentSchema = z.object({
 
 type CommentNoKids = Omit<z.infer<typeof CommentSchema>, "kids">;
 
+export type Post = z.infer<typeof PostSchema> & {
+  relative_date: string;
+};
+
 export type Comment = CommentNoKids & {
   kids: Array<Comment>;
   relative_date: string;
