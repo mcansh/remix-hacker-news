@@ -5,6 +5,7 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useRouteError,
 } from "@remix-run/react";
 import faviconHref from "~/logo.png?url";
 
@@ -34,9 +35,27 @@ export default function App() {
 }
 
 export function ErrorBoundary() {
+  const error = useRouteError();
+
+  if (typeof document === "undefined") {
+    console.error(error);
+  }
+
+  if (process.env.NODE_ENV === "production") {
+    return (
+      <div className="p-2 text-black">
+        <pre>Unknown.</pre>
+      </div>
+    );
+  }
+
   return (
     <div className="p-2 text-black">
-      <pre>Unknown.</pre>
+      {error instanceof Error ? (
+        <pre>{error.message}</pre>
+      ) : (
+        <pre>{JSON.stringify(error, null, 2)}</pre>
+      )}
     </div>
   );
 }
