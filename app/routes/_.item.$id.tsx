@@ -2,13 +2,15 @@ import * as React from "react";
 import { unstable_defineLoader } from "@remix-run/cloudflare";
 import { Await, useLoaderData } from "@remix-run/react";
 import type { MetaArgs_SingleFetch } from "@remix-run/react";
-import { responseHelper } from "~/.server/utils";
 import { api } from "~/.server/api";
 import type { Comment } from "~/.server/api";
 
 export const loader = unstable_defineLoader(async ({ params, response }) => {
   const id = Number(params.id);
-  if (isNaN(id)) throw responseHelper(response, { status: 404 });
+  if (isNaN(id)) {
+    response.status = 404;
+    throw response;
+  }
 
   const story = await api.get_post(id);
   const kids = api.get_comments(story.kids);

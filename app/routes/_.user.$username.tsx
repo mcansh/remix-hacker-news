@@ -3,10 +3,12 @@ import { unstable_defineLoader } from "@remix-run/cloudflare";
 import type { MetaArgs_SingleFetch } from "@remix-run/react";
 import { useLoaderData } from "@remix-run/react";
 import { api } from "~/.server/api";
-import { responseHelper } from "~/.server/utils";
 
 export const loader = unstable_defineLoader(async ({ params, response }) => {
-  if (!params.username) throw responseHelper(response, { status: 404 });
+  if (!params.username) {
+    response.status = 404;
+    throw response;
+  }
   const { user } = await api.get_user(params.username);
   const meta = [
     { title: `${user.id} | Remix Hacker News` },
