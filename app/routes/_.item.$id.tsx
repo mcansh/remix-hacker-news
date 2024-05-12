@@ -1,19 +1,24 @@
+import * as React from "react";
 import { unstable_defineLoader } from "@remix-run/cloudflare";
-import { useLoaderData } from "@remix-run/react";
+import { Await, useLoaderData } from "@remix-run/react";
 import type { MetaArgs_SingleFetch } from "@remix-run/react";
 import { responseHelper } from "~/.server/utils";
-import type { HackerNewsFullComment } from "~/.server/api";
 import { api } from "~/.server/api";
+import type { Comment } from "~/.server/api";
 
 export const loader = unstable_defineLoader(async ({ params, response }) => {
   const id = Number(params.id);
   if (isNaN(id)) throw responseHelper(response, { status: 404 });
+
   const story = await api.get_post(id);
+  const kids = api.get_comments(story.kids);
+
   const meta = [
     { title: `${story.title} | Remix Hacker News` },
     { name: "description", content: "Hacker News made with Remix.run" },
   ];
-  return { story, meta };
+
+  return { story, meta, kids };
 });
 
 export function meta({ data }: MetaArgs_SingleFetch<typeof loader>) {
@@ -44,7 +49,16 @@ export default function ItemPage() {
         />
       ) : null}
 
-      <Comments comments={data.story.kids} />
+      <React.Suspense
+        fallback={<div className="mt-4">Loading Comments...</div>}
+      >
+        <Await resolve={data.kids}>
+          {(comments) => {
+            console.log({ comments });
+            return <Comments comments={comments} />;
+          }}
+        </Await>
+      </React.Suspense>
     </div>
   );
 }
@@ -53,7 +67,7 @@ function Comments({
   comments,
   depth = 1,
 }: {
-  comments: Array<HackerNewsFullComment> | undefined;
+  comments: Array<Comment> | undefined;
   depth?: number;
 }) {
   if (!comments || comments.length === 0) return null;
@@ -61,24 +75,22 @@ function Comments({
 
   return (
     <div className="mt-4 space-y-4" style={{ marginLeft }}>
-      {comments.map((comment) => {
-        return (
-          <div key={comment.id}>
-            <p>
-              {comment.by} {comment.relative_date}
-            </p>
-            {comment.text ? (
-              <div
-                className="text-black"
-                dangerouslySetInnerHTML={{ __html: comment.text }}
-              />
-            ) : null}
-            {comment.kids == undefined || comment.kids.length === 0 ? null : (
-              <Comments comments={comment.kids} depth={depth + 1} />
-            )}
-          </div>
-        );
-      })}
+      {comments.map((comment) => (
+        <div key={comment.id}>
+          <p>
+            {comment.by} {comment.relative_date}
+          </p>
+          {comment.text ? (
+            <div
+              className="text-black"
+              dangerouslySetInnerHTML={{ __html: comment.text }}
+            />
+          ) : null}
+          {comment.kids == undefined || comment.kids.length === 0 ? null : (
+            <Comments comments={comment.kids} depth={depth + 1} />
+          )}
+        </div>
+      ))}
     </div>
   );
 }
