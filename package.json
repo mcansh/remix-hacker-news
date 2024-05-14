@@ -18,8 +18,8 @@
     "clsx": "^2.1.1",
     "date-fns": "^3.6.0",
     "isbot": "^5.1.6",
-    "react": "19.0.0-beta-e7d213dfb0-20240507",
-    "react-dom": "19.0.0-beta-e7d213dfb0-20240507",
+    "react": "19.0.0-beta-9d76c954cf-20240510",
+    "react-dom": "19.0.0-beta-9d76c954cf-20240510",
     "remix-utils": "^7.6.0",
     "sanitize-html": "^2.13.0",
     "time-ago": "^0.2.1",
@@ -30,8 +30,8 @@
     "@cloudflare/workers-types": "^4.20240502.0",
     "@eslint/js": "^9.2.0",
     "@remix-run/dev": "2.9.2",
-    "@types/react": "npm:types-react@beta",
-    "@types/react-dom": "npm:types-react-dom@beta",
+    "@types/react": "npm:types-react@19.0.0-beta.1",
+    "@types/react-dom": "npm:types-react-dom@19.0.0-beta.1",
     "@types/sanitize-html": "^2.11.0",
     "autoprefixer": "^10.4.19",
     "eslint": "^9.2.0",
@@ -45,9 +45,11 @@
     "vite-tsconfig-paths": "^4.3.2",
     "wrangler": "^3.55.0"
   },
-  "overrides": {
-    "react": "19.0.0-beta-e7d213dfb0-20240507",
-    "react-dom": "19.0.0-beta-e7d213dfb0-20240507"
+  "pnpm": {
+    "overrides": {
+      "react": "19.0.0-beta-9d76c954cf-20240510",
+      "react-dom": "19.0.0-beta-9d76c954cf-20240510"
+    }
   },
   "engines": {
     "node": ">=18"
