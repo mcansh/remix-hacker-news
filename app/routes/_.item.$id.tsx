@@ -1,6 +1,6 @@
 import * as React from "react";
 import { unstable_defineLoader } from "@remix-run/cloudflare";
-import { Await, useLoaderData } from "@remix-run/react";
+import { useLoaderData } from "@remix-run/react";
 import type { MetaArgs_SingleFetch } from "@remix-run/react";
 import { api } from "~/.server/api";
 import type { Comment } from "~/.server/api";
@@ -33,6 +33,8 @@ export default function ItemPage() {
   const commentText = data.story.descendants === 1 ? "comment" : "comments";
   const pointsText = data.story.score === 1 ? "point" : "points";
 
+  let comments = React.use(data.kids);
+
   return (
     <div className="px-4 py-2">
       <h1 className="text-black">{data.story.title}</h1>
@@ -52,9 +54,7 @@ export default function ItemPage() {
       <React.Suspense
         fallback={<div className="mt-4">Loading Comments...</div>}
       >
-        <Await resolve={data.kids}>
-          {(comments) => <Comments comments={comments} />}
-        </Await>
+        <Comments comments={comments} />
       </React.Suspense>
     </div>
   );
