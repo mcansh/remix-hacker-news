@@ -53,10 +53,7 @@ export default function ItemPage() {
         fallback={<div className="mt-4">Loading Comments...</div>}
       >
         <Await resolve={data.kids}>
-          {(comments) => {
-            console.log({ comments });
-            return <Comments comments={comments} />;
-          }}
+          {(comments) => <Comments comments={comments} />}
         </Await>
       </React.Suspense>
     </div>
