@@ -17,10 +17,10 @@ export const meta: MetaFunction = () => {
 };
 
 export const loader = unstable_defineLoader(async ({ request, response }) => {
-  let session = await sessionStorage.getSession(request.headers.get("Cookie"));
-  let url = new URL(request.url);
+  const session = await sessionStorage.getSession(request.headers.get("Cookie"));
+  const url = new URL(request.url);
 
-  let pageParam = url.searchParams.get("page");
+  const pageParam = url.searchParams.get("page");
 
   if (pageParam && pageParam === "1") {
     response.status = 302;
@@ -28,9 +28,9 @@ export const loader = unstable_defineLoader(async ({ request, response }) => {
     throw response;
   }
 
-  let page = Number(pageParam);
+  const page = Number(pageParam);
 
-  let hidden = session.get("hidden") || [];
+  const hidden = session.get("hidden") || [];
   const { has_more, stories } = await api.get_posts(
     "/topstories.json",
     hidden,
@@ -40,21 +40,21 @@ export const loader = unstable_defineLoader(async ({ request, response }) => {
 });
 
 export const action = unstable_defineAction(async ({ request, response }) => {
-  let session = await sessionStorage.getSession(request.headers.get("Cookie"));
-  let formData = await request.formData();
-  let intent = formData.get("intent");
+  const session = await sessionStorage.getSession(request.headers.get("Cookie"));
+  const formData = await request.formData();
+  const intent = formData.get("intent");
 
-  let schema = z.object({
+  const schema = z.object({
     intent: z.string(),
     id: z.coerce.number(),
   });
 
-  let result = schema.parse(Object.fromEntries(formData.entries()));
+  const result = schema.parse(Object.fromEntries(formData.entries()));
 
   switch (intent) {
     case "hide": {
-      let hidden = session.get("hidden") || [];
-      let hiddenSet = new Set(hidden);
+      const hidden = session.get("hidden") || [];
+      const hiddenSet = new Set(hidden);
       hiddenSet.add(result.id);
       session.set("hidden", Array.from(hiddenSet));
 

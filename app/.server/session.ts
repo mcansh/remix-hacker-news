@@ -2,7 +2,7 @@ import { createCookieSessionStorage } from "@remix-run/cloudflare";
 import { createTypedSessionStorage } from "remix-utils/typed-session";
 import { z } from "zod";
 
-let sessionStorage = createCookieSessionStorage({
+const sessionStorage = createCookieSessionStorage({
   cookie: {
     name: "__session",
     httpOnly: true,
@@ -13,10 +13,10 @@ let sessionStorage = createCookieSessionStorage({
   },
 });
 
-let schema = z.object({
+const schema = z.object({
   hidden: z.array(z.number()).optional(),
 });
 
-let typedSessionStorage = createTypedSessionStorage({ sessionStorage, schema });
+const typedSessionStorage = createTypedSessionStorage({ sessionStorage, schema });
 
 export { typedSessionStorage as sessionStorage };

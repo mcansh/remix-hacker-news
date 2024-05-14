@@ -2,24 +2,15 @@ import { Form, Link } from "@remix-run/react";
 import type { Feed } from "~/.server/api";
 
 type Props =
-  | {
-      stories: Feed;
-      hasMore?: never;
-      page?: never;
-    }
-  | {
-      hasMore: boolean;
-      page: number;
-      stories: Feed;
-    };
+  | { hasMore?: never; page?: never; stories: Feed }
+  | { hasMore: boolean; page: number; stories: Feed };
 
 export function Feed({ hasMore, page, stories }: Props) {
   return (
     <div className="my-2.5 space-y-2.5 px-2.5 py-1">
-      {stories.map((story, index) => {
-        const commentText =
-          story.descendants && story.descendants === 1 ? "comment" : "comments";
-        let pointsText = story.score === 1 ? "point" : "points";
+      {stories.map((story) => {
+        const commentText = story.descendants === 1 ? "comment" : "comments";
+        const pointsText = story.score === 1 ? "point" : "points";
 
         return (
           <div key={story.id} className="flex space-x-2.5">

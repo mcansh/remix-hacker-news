@@ -30,10 +30,7 @@ export function meta({ data }: MetaArgs_SingleFetch<typeof loader>) {
 export default function ItemPage() {
   const data = useLoaderData<typeof loader>();
 
-  const commentText =
-    data.story.descendants && data.story.descendants === 1
-      ? "comment"
-      : "comments";
+  const commentText = data.story.descendants === 1 ? "comment" : "comments";
   const pointsText = data.story.score === 1 ? "point" : "points";
 
   return (
