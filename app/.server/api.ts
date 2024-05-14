@@ -90,9 +90,9 @@ class Api {
     const url = this.#get_url(endpoint);
     const ids = await zetch(z.array(z.number()), url);
 
-    let perPage = 30;
+    const perPage = 30;
     let start = (page - 1) * perPage;
-    let end = start + perPage;
+    const end = start + perPage;
 
     const critical_ids = ids
       .filter((id) => !hidden.includes(id))
@@ -136,7 +136,11 @@ class Api {
   async get_comments(kids: Array<number> | undefined): Promise<Comment[]> {
     if (!kids) return [];
     const commentsToFetch = kids.slice(0, 4);
-    const comments = await Promise.all(commentsToFetch.map(this.get_comment));
+    const comments = await Promise.all(
+      commentsToFetch.map((id) => {
+        return this.get_comment(id);
+      }),
+    );
 
     const childComments = await Promise.all(
       comments.map(async (comment) => {
