@@ -7,7 +7,6 @@ import {
   ScrollRestoration,
   useRouteError,
 } from "@remix-run/react";
-import faviconHref from "~/logo.png?url";
 
 import "~/app.css";
 
@@ -16,7 +15,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
     <html lang="en" className="bg-zinc-100">
       <head>
         <meta charSet="utf-8" />
-        <link rel="icon" href={faviconHref} type="image/png" />
+        <link rel="icon" href="/favicon.ico" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <Links />
