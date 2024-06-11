@@ -1,3 +1,22 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --font-family-sans: "Verdana", "Geneva", "sans-serif";
+
+  --font-size-subtext: 7pt;
+  --font-size-subtext--line-height: 1;
+  --font-size-admin: 8.5pt;
+  --font-size-admin--line-height: 1;
+  --font-size-comment: 9pt;
+  --font-size-comment--line-height: 1;
+  --font-size-base: 10pt;
+  --font-size-base--line-height: 1;
+
+  /* clear color namespace */
+  --color-*: initial;
+  --color-primary: #ff6600;
+  --color-bg: #f6f6ef;
+  --color-default: #828282;
+  --color-black: #000;
+  --color-white: #fff;
+}

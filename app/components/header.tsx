@@ -14,11 +14,8 @@ const links = [
 
 export function Header() {
   return (
-    <header className="flex flex-col items-center bg-primary p-1 text-black sm:flex-row">
-      <Link
-        to="/"
-        className="mb-2.5 mr-2.5 flex flex-shrink-0 items-center sm:mb-0"
-      >
+    <header className="bg-primary flex flex-col items-center p-1 text-black sm:flex-row">
+      <Link to="/" className="mr-2.5 mb-2.5 flex shrink-0 items-center sm:mb-0">
         <img height={20} width={20} src={logoUrl} alt="remix logo" />
         <h1 className="ml-1 font-bold">Hacker Remix</h1>
       </Link>

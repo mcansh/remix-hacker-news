@@ -55,7 +55,7 @@ export default function ItemPage() {
   const comments = React.use(data.kids);
 
   return (
-    <div className="px-4 py-2">
+    <div className="py-2 px-4">
       <h1 className="text-black">{data.story.title}</h1>
 
       <p className="text-xs">
