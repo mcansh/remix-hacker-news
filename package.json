@@ -18,8 +18,8 @@
     "clsx": "^2.1.1",
     "date-fns": "^3.6.0",
     "isbot": "^5.1.6",
-    "react": "19.0.0-beta-9d76c954cf-20240510",
-    "react-dom": "19.0.0-beta-9d76c954cf-20240510",
+    "react": "19.0.0-rc-6230622a1a-20240610",
+    "react-dom": "19.0.0-rc-6230622a1a-20240610",
     "remix-utils": "^7.6.0",
     "sanitize-html": "^2.13.0",
     "time-ago": "^0.2.1",
@@ -27,11 +27,11 @@
     "zod-fetch": "^0.1.1"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20240502.0",
+    "@cloudflare/workers-types": "4.20240512.0",
     "@eslint/js": "^9.2.0",
     "@remix-run/dev": "2.9.2",
-    "@types/react": "npm:types-react@19.0.0-beta.1",
-    "@types/react-dom": "npm:types-react-dom@19.0.0-beta.1",
+    "@types/react": "npm:types-react@19.0.0-rc.1",
+    "@types/react-dom": "npm:types-react-dom@19.0.0-rc.1",
     "@types/sanitize-html": "^2.11.0",
     "autoprefixer": "^10.4.19",
     "eslint": "^9.2.0",
@@ -47,8 +47,10 @@
   },
   "pnpm": {
     "overrides": {
-      "react": "19.0.0-beta-9d76c954cf-20240510",
-      "react-dom": "19.0.0-beta-9d76c954cf-20240510"
+      "@types/react": "npm:types-react@19.0.0-rc.1",
+      "@types/react-dom": "npm:types-react-dom@19.0.0-rc.1",
+      "react": "19.0.0-rc-6230622a1a-20240610",
+      "react-dom": "19.0.0-rc-6230622a1a-20240610"
     }
   },
   "engines": {
