@@ -3,7 +3,7 @@ import { unstable_defineLoader } from "@remix-run/cloudflare";
 import type { MetaArgs_SingleFetch } from "@remix-run/react";
 import { useLoaderData } from "@remix-run/react";
 import { api } from "~/.server/api";
-import { CacheHeaders } from "cdn-cache-control";
+import { cacheHeader } from "pretty-cache-header";
 
 export const loader = unstable_defineLoader(async ({ params, response }) => {
   if (!params.username) {
@@ -17,9 +17,22 @@ export const loader = unstable_defineLoader(async ({ params, response }) => {
     { name: "description", content: "Hacker News made with Remix.run" },
   ];
 
-  for (const [header, value] of new CacheHeaders().swr().ttl(60)) {
-    response.headers.append(header, value);
-  }
+  response.headers.append(
+    "Cache-Control",
+    cacheHeader({
+      public: true,
+      maxAge: "0m",
+      mustRevalidate: true,
+    }),
+  );
+  response.headers.append(
+    "cdn-cache-control",
+    cacheHeader({
+      public: true,
+      sMaxage: "60s",
+      staleWhileRevalidate: "1w",
+    }),
+  );
 
   return { user, meta };
 });

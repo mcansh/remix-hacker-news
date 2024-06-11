@@ -23,9 +23,6 @@ importers:
       '@remix-run/react':
         specifier: 0.0.0-nightly-8a997a62d-20240604
         version: 0.0.0-nightly-8a997a62d-20240604(react-dom@19.0.0-rc-6230622a1a-20240610(react@19.0.0-rc-6230622a1a-20240610))(react@19.0.0-rc-6230622a1a-20240610)(typescript@5.4.5)
-      cdn-cache-control:
-        specifier: ^1.0.0
-        version: 1.0.0
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
@@ -35,6 +32,9 @@ importers:
       isbot:
         specifier: ^5.1.9
         version: 5.1.9
+      pretty-cache-header:
+        specifier: ^1.0.0
+        version: 1.0.0
       react:
         specifier: 19.0.0-rc-6230622a1a-20240610
         version: 19.0.0-rc-6230622a1a-20240610
@@ -1483,9 +1483,6 @@ packages:
   ccount@2.0.1:
     resolution: {integrity: sha512-eyrF0jiFpY+3drT6383f1qhkbGsLSifNAjA61IUjZjmLCWjItY6LB9ft9YhoDgwfmclB2zhu51Lc7+95b8NRAg==}
 
-  cdn-cache-control@1.0.0:
-    resolution: {integrity: sha512-O2ia/hwX1GSPydNaKWHu2gbqU/eihFXcqdQj5SQrCacTTtNrFMwk0vmBmPl2ROJXnvyza10jTRd7JppLhzM7uQ==}
-
   chalk@2.4.2:
     resolution: {integrity: sha512-Mti+f9lpJNcwF4tWV8/OrTTtF1gZi+f8FqlyAdouralcFWFQWF2+NgCHShjkCb+IFBLq9buZwE1xckQU4peSuQ==}
     engines: {node: '>=4'}
@@ -2933,6 +2930,10 @@ packages:
     engines: {node: '>=14'}
     hasBin: true
 
+  pretty-cache-header@1.0.0:
+    resolution: {integrity: sha512-xtXazslu25CdnGnUkByU1RoOjK55TqwatJkjjJLg5ZAdz2Lngko/mmaUgeET36P2GMlNwh3fdM7FWBO717pNcw==}
+    engines: {node: '>=12.13'}
+
   pretty-ms@7.0.1:
     resolution: {integrity: sha512-973driJZvxiGOQ5ONsFhOF/DtzPMOMtgC11kCpUrPGMTgqp2q/1gwzCquocrN33is0VZ5GFHXZYMM9l6h67v2Q==}
     engines: {node: '>=10'}
@@ -3369,6 +3370,10 @@ packages:
 
   time-ago@0.2.1:
     resolution: {integrity: sha512-fQ3WQ5yPBoNefBgITR+kMnd5aWiKYhBNSgQH3FwpJgDCaVEmju7rWyP+Rk52KyQbRwQEnw3ox2yxcS4yMxgP+g==}
+
+  timestring@6.0.0:
+    resolution: {integrity: sha512-wMctrWD2HZZLuIlchlkE2dfXJh7J2KDI9Dwl+2abPYg0mswQHfOAyQW3jJg1pY5VfttSINZuKcXoB3FGypVklA==}
+    engines: {node: '>=8'}
 
   to-fast-properties@2.0.0:
     resolution: {integrity: sha512-/OaKK0xYrs3DmxRYqL/yDc+FxFUVYhDlXMhRmv3z915w2HF1tnN1omB354j8VUGO/hbRzyD6Y3sA7v7GS/ceog==}
@@ -5105,8 +5110,6 @@ snapshots:
 
   ccount@2.0.1: {}
 
-  cdn-cache-control@1.0.0: {}
-
   chalk@2.4.2:
     dependencies:
       ansi-styles: 3.2.1
@@ -6696,6 +6699,10 @@ snapshots:
 
   prettier@3.3.2: {}
 
+  pretty-cache-header@1.0.0:
+    dependencies:
+      timestring: 6.0.0
+
   pretty-ms@7.0.1:
     dependencies:
       parse-ms: 2.1.0
@@ -7195,6 +7202,8 @@ snapshots:
       xtend: 4.0.2
 
   time-ago@0.2.1: {}
+
+  timestring@6.0.0: {}
 
   to-fast-properties@2.0.0: {}
 

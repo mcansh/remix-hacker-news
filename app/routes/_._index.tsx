@@ -5,7 +5,7 @@ import {
 } from "@remix-run/cloudflare";
 import { useLoaderData } from "@remix-run/react";
 import { z } from "zod";
-import { CacheHeaders } from "cdn-cache-control";
+import { cacheHeader } from "pretty-cache-header";
 import { Feed } from "~/components/feed";
 import { api } from "~/.server/api";
 
@@ -39,11 +39,22 @@ export const loader = unstable_defineLoader(
       page || 1,
     );
 
-    // could also do `new CacheHeaders().public().swr().ttl(60).copyTo(response.headers)`
-    // but this is more explicit
-    for (const [header, value] of new CacheHeaders().swr().ttl(60)) {
-      response.headers.append(header, value);
-    }
+    response.headers.append(
+      "Cache-Control",
+      cacheHeader({
+        public: true,
+        maxAge: "0m",
+        mustRevalidate: true,
+      }),
+    );
+    response.headers.append(
+      "cdn-cache-control",
+      cacheHeader({
+        public: true,
+        sMaxage: "60s",
+        staleWhileRevalidate: "1w",
+      }),
+    );
 
     return { stories, page, has_more };
   },
