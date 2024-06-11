@@ -2,9 +2,9 @@ import * as React from "react";
 import { unstable_defineLoader } from "@remix-run/cloudflare";
 import { useLoaderData } from "@remix-run/react";
 import type { MetaArgs_SingleFetch } from "@remix-run/react";
+import { cacheHeader } from "pretty-cache-header";
 import { api } from "~/.server/api";
 import type { Comment } from "~/.server/api";
-import { CacheHeaders } from "cdn-cache-control";
 
 export const loader = unstable_defineLoader(async ({ params, response }) => {
   const id = Number(params.id);
@@ -22,9 +22,22 @@ export const loader = unstable_defineLoader(async ({ params, response }) => {
     { name: "description", content: "Hacker News made with Remix.run" },
   ];
 
-  for (const [header, value] of new CacheHeaders().swr().ttl(60)) {
-    response.headers.append(header, value);
-  }
+  response.headers.append(
+    "Cache-Control",
+    cacheHeader({
+      public: true,
+      maxAge: "0m",
+      mustRevalidate: true,
+    }),
+  );
+  response.headers.append(
+    "cdn-cache-control",
+    cacheHeader({
+      public: true,
+      sMaxage: "60s",
+      staleWhileRevalidate: "1w",
+    }),
+  );
 
   return { story, meta, kids };
 });

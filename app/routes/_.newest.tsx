@@ -1,16 +1,30 @@
 import type { MetaFunction } from "@remix-run/cloudflare";
 import { unstable_defineLoader } from "@remix-run/cloudflare";
 import { useLoaderData } from "@remix-run/react";
-import { CacheHeaders } from "cdn-cache-control";
+import { cacheHeader } from "pretty-cache-header";
+
 import { api } from "~/.server/api";
 import { Feed } from "~/components/feed";
 
 export const loader = unstable_defineLoader(async ({ response }) => {
   const { stories } = await api.get_posts("/newstories.json");
 
-  for (const [header, value] of new CacheHeaders().swr().ttl(60)) {
-    response.headers.append(header, value);
-  }
+  response.headers.append(
+    "Cache-Control",
+    cacheHeader({
+      public: true,
+      maxAge: "0m",
+      mustRevalidate: true,
+    }),
+  );
+  response.headers.append(
+    "cdn-cache-control",
+    cacheHeader({
+      public: true,
+      sMaxage: "60s",
+      staleWhileRevalidate: "1w",
+    }),
+  );
 
   return { stories };
 });
