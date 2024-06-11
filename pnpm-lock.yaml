@@ -23,6 +23,9 @@ importers:
       '@remix-run/react':
         specifier: 0.0.0-nightly-8a997a62d-20240604
         version: 0.0.0-nightly-8a997a62d-20240604(react-dom@19.0.0-rc-6230622a1a-20240610(react@19.0.0-rc-6230622a1a-20240610))(react@19.0.0-rc-6230622a1a-20240610)(typescript@5.4.5)
+      cdn-cache-control:
+        specifier: ^1.0.0
+        version: 1.0.0
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
@@ -1479,6 +1482,9 @@ packages:
 
   ccount@2.0.1:
     resolution: {integrity: sha512-eyrF0jiFpY+3drT6383f1qhkbGsLSifNAjA61IUjZjmLCWjItY6LB9ft9YhoDgwfmclB2zhu51Lc7+95b8NRAg==}
+
+  cdn-cache-control@1.0.0:
+    resolution: {integrity: sha512-O2ia/hwX1GSPydNaKWHu2gbqU/eihFXcqdQj5SQrCacTTtNrFMwk0vmBmPl2ROJXnvyza10jTRd7JppLhzM7uQ==}
 
   chalk@2.4.2:
     resolution: {integrity: sha512-Mti+f9lpJNcwF4tWV8/OrTTtF1gZi+f8FqlyAdouralcFWFQWF2+NgCHShjkCb+IFBLq9buZwE1xckQU4peSuQ==}
@@ -5098,6 +5104,8 @@ snapshots:
       - supports-color
 
   ccount@2.0.1: {}
+
+  cdn-cache-control@1.0.0: {}
 
   chalk@2.4.2:
     dependencies:

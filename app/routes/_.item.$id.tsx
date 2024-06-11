@@ -4,9 +4,11 @@ import { useLoaderData } from "@remix-run/react";
 import type { MetaArgs_SingleFetch } from "@remix-run/react";
 import { api } from "~/.server/api";
 import type { Comment } from "~/.server/api";
+import { CacheHeaders } from "cdn-cache-control";
 
 export const loader = unstable_defineLoader(async ({ params, response }) => {
   const id = Number(params.id);
+
   if (isNaN(id)) {
     response.status = 404;
     throw response;
@@ -19,6 +21,10 @@ export const loader = unstable_defineLoader(async ({ params, response }) => {
     { title: `${story.title} | Remix Hacker News` },
     { name: "description", content: "Hacker News made with Remix.run" },
   ];
+
+  for (const [header, value] of new CacheHeaders().swr().ttl(60)) {
+    response.headers.append(header, value);
+  }
 
   return { story, meta, kids };
 });

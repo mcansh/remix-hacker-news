@@ -3,17 +3,24 @@ import { unstable_defineLoader } from "@remix-run/cloudflare";
 import type { MetaArgs_SingleFetch } from "@remix-run/react";
 import { useLoaderData } from "@remix-run/react";
 import { api } from "~/.server/api";
+import { CacheHeaders } from "cdn-cache-control";
 
 export const loader = unstable_defineLoader(async ({ params, response }) => {
   if (!params.username) {
     response.status = 404;
     throw response;
   }
+
   const { user } = await api.get_user(params.username);
   const meta = [
     { title: `${user.id} | Remix Hacker News` },
     { name: "description", content: "Hacker News made with Remix.run" },
   ];
+
+  for (const [header, value] of new CacheHeaders().swr().ttl(60)) {
+    response.headers.append(header, value);
+  }
+
   return { user, meta };
 });
 

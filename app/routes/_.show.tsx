@@ -1,11 +1,17 @@
 import { unstable_defineLoader } from "@remix-run/cloudflare";
 import type { MetaFunction } from "@remix-run/cloudflare";
 import { useLoaderData } from "@remix-run/react";
+import { CacheHeaders } from "cdn-cache-control";
 import { api } from "~/.server/api";
 import { Feed } from "~/components/feed";
 
-export const loader = unstable_defineLoader(async () => {
+export const loader = unstable_defineLoader(async ({ response }) => {
   const { stories } = await api.get_posts("/showstories.json");
+
+  for (const [header, value] of new CacheHeaders().swr().ttl(60)) {
+    response.headers.append(header, value);
+  }
+
   return { stories };
 });
 

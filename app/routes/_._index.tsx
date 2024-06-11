@@ -4,9 +4,10 @@ import {
   unstable_defineLoader,
 } from "@remix-run/cloudflare";
 import { useLoaderData } from "@remix-run/react";
+import { z } from "zod";
+import { CacheHeaders } from "cdn-cache-control";
 import { Feed } from "~/components/feed";
 import { api } from "~/.server/api";
-import { z } from "zod";
 
 export const meta: MetaFunction = () => {
   return [
@@ -37,6 +38,13 @@ export const loader = unstable_defineLoader(
       hidden,
       page || 1,
     );
+
+    // could also do `new CacheHeaders().public().swr().ttl(60).copyTo(response.headers)`
+    // but this is more explicit
+    for (const [header, value] of new CacheHeaders().swr().ttl(60)) {
+      response.headers.append(header, value);
+    }
+
     return { stories, page, has_more };
   },
 );
