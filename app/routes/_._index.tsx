@@ -17,7 +17,8 @@ export const meta: MetaFunction = () => {
 };
 
 export const loader = unstable_defineLoader(async ({ request, response }) => {
-  const session = await sessionStorage.getSession(request.headers.get("Cookie"));
+  const cookie = request.headers.get("Cookie");
+  const session = await sessionStorage.getSession(cookie);
   const url = new URL(request.url);
 
   const pageParam = url.searchParams.get("page");
@@ -40,7 +41,8 @@ export const loader = unstable_defineLoader(async ({ request, response }) => {
 });
 
 export const action = unstable_defineAction(async ({ request, response }) => {
-  const session = await sessionStorage.getSession(request.headers.get("Cookie"));
+  const cookie = request.headers.get("Cookie");
+  const session = await sessionStorage.getSession(cookie);
   const formData = await request.formData();
   const intent = formData.get("intent");
 

@@ -4,7 +4,7 @@ declare module "time-ago" {
   export function mintoread(
     text: string,
     altcmt?: string | null | undefined,
-    wordsPerMinute?: number
+    wordsPerMinute?: number,
   ): string;
 
   // convert to ms: seconds, minutes, hours, days, weeks, months, years

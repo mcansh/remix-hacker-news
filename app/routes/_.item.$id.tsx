@@ -33,7 +33,7 @@ export default function ItemPage() {
   const commentText = data.story.descendants === 1 ? "comment" : "comments";
   const pointsText = data.story.score === 1 ? "point" : "points";
 
-  let comments = React.use(data.kids);
+  const comments = React.use(data.kids);
 
   return (
     <div className="px-4 py-2">

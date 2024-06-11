@@ -17,6 +17,9 @@ const schema = z.object({
   hidden: z.array(z.number()).optional(),
 });
 
-const typedSessionStorage = createTypedSessionStorage({ sessionStorage, schema });
+const typedSessionStorage = createTypedSessionStorage({
+  sessionStorage,
+  schema,
+});
 
 export { typedSessionStorage as sessionStorage };
