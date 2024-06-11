@@ -30,6 +30,7 @@
   "devDependencies": {
     "@cloudflare/workers-types": "4.20240605.0",
     "@eslint/js": "^9.4.0",
+    "@metronome-sh/dev-error-boundary": "^0.0.10",
     "@remix-run/dev": "0.0.0-nightly-8a997a62d-20240604",
     "@types/react": "npm:types-react@19.0.0-rc.1",
     "@types/react-dom": "npm:types-react-dom@19.0.0-rc.1",
