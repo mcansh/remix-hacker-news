@@ -30,13 +30,13 @@ export const loader = unstable_defineLoader(
       throw response;
     }
 
-    const page = Number(pageParam);
+    const page = Number(pageParam) || 1;
 
     const hidden = session.get("hidden") || [];
     const { has_more, stories } = await api.get_posts(
       "/topstories.json",
       hidden,
-      page || 1,
+      page,
     );
 
     response.headers.append(
