@@ -7,7 +7,7 @@ type Props =
 
 export function Feed({ hasMore, page, stories }: Props) {
   return (
-    <div className="my-2.5 space-y-2.5 px-2.5 py-1">
+    <div className="my-2.5 space-y-2.5 py-1 px-2.5">
       {stories.map((story) => {
         const commentText = story.descendants === 1 ? "comment" : "comments";
         const pointsText = story.score === 1 ? "point" : "points";
@@ -40,7 +40,7 @@ export function Feed({ hasMore, page, stories }: Props) {
                   </>
                 ) : null}
               </div>
-              <div className="text-neutral-400 text-subtext">
+              <div className="text-subtext text-neutral-400">
                 {story.score} {pointsText} by{" "}
                 <Link
                   prefetch="intent"
@@ -86,7 +86,7 @@ export function Feed({ hasMore, page, stories }: Props) {
         <Link
           prefetch="intent"
           to={{ search: `?page=${page + 1}` }}
-          className="ml-8 mt-8 block text-black"
+          className="mt-8 ml-8 block text-black"
         >
           More
         </Link>
