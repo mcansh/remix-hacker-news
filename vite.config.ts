@@ -13,6 +13,7 @@ export default defineConfig({
     remixCloudflareDevProxy({ getLoadContext }),
     remix({
       future: {
+        unstable_fogOfWar: true,
         unstable_singleFetch: true,
         v3_fetcherPersist: true,
         v3_relativeSplatPath: true,
