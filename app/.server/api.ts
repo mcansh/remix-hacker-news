@@ -1,7 +1,7 @@
+import sanitizeHtml from "sanitize-html";
 import * as timeago from "time-ago";
 import { z } from "zod";
 import { createZodFetcher } from "zod-fetch";
-import sanitizeHtml from "sanitize-html";
 
 const zetch = createZodFetcher();
 
@@ -40,7 +40,7 @@ export type Post = z.infer<typeof PostSchema> & {
   relative_date: string;
 };
 
-export type Feed = Array<Omit<Post, "text" | "kids"> & { number: number }>;
+export type FeedType = Array<Omit<Post, "text" | "kids"> & { number: number }>;
 
 type CommentNoKids = Omit<z.infer<typeof CommentSchema>, "kids">;
 
@@ -68,7 +68,7 @@ class Api {
   #formatPath(string: string) {
     const parts = string.split("/");
     if (parts.at(0) !== "v0") parts.unshift("v0");
-    return "/" + parts.filter(Boolean).join("/");
+    return `/${parts.filter(Boolean).join("/")}`;
   }
 
   async get_user(username: string) {
@@ -82,9 +82,9 @@ class Api {
   async get_posts(
     endpoint: Endpoint,
     hidden: Array<number> = [],
-    page: number = 1,
+    page = 1
   ): Promise<{
-    stories: Feed;
+    stories: FeedType;
     has_more: boolean;
   }> {
     const url = this.#get_url(endpoint);
@@ -101,14 +101,15 @@ class Api {
     const critical = await Promise.all(
       critical_ids.map((id) => {
         return zetch(PostSchema, this.#get_url(`/item/${id}.json`));
-      }),
+      })
     );
 
     return {
       has_more: ids.length > end,
       stories: critical.map((item) => {
+        let number = start + 1;
         return {
-          number: (start += 1),
+          number,
           id: item.id,
           title: item.title,
           url: item.url,
@@ -139,7 +140,7 @@ class Api {
     const comments = await Promise.all(
       commentsToFetch.map((id) => {
         return this.get_comment(id);
-      }),
+      })
     );
 
     const childComments = await Promise.all(
@@ -147,7 +148,7 @@ class Api {
         if (comment.kids) {
           return this.get_comments(comment.kids);
         }
-      }),
+      })
     );
 
     return comments.map((comment, index) => {
@@ -155,7 +156,7 @@ class Api {
       return {
         ...comment,
         kids: kids.filter((kid) => {
-          return kid.by != undefined || kid.text != undefined;
+          return kid.by !== undefined || kid.text !== undefined;
         }),
       };
     });

@@ -1,64 +1,65 @@
 {
-  "name": "remix-hacker-news",
-  "private": true,
-  "description": "hacker news made with remix.run",
-  "repository": "https://github.com/mcansh/remix-hacker-news",
-  "author": "Logan McAnsh <logan@mcan.sh> (https://mcan.sh)",
-  "sideEffects": false,
-  "type": "module",
-  "scripts": {
-    "build": "remix vite:build",
-    "dev": "remix vite:dev",
-    "lint": "eslint --no-error-on-unmatched-pattern --cache --cache-location ./node_modules/.cache/eslint --fix .",
-    "format": "prettier --ignore-path .prettierignore --ignore-path .gitignore --ignore-unknown --write .",
-    "start": "wrangler pages dev --compatibility-date=2023-06-21 ./build/client"
-  },
-  "dependencies": {
-    "@remix-run/cloudflare": "2.10.3",
-    "@remix-run/cloudflare-pages": "2.10.3",
-    "@remix-run/react": "2.10.3",
-    "clsx": "^2.1.1",
-    "date-fns": "^3.6.0",
-    "isbot": "^5.1.13",
-    "pretty-cache-header": "^1.0.0",
-    "react": "19.0.0-rc-6230622a1a-20240610",
-    "react-dom": "19.0.0-rc-6230622a1a-20240610",
-    "remix-utils": "^7.6.0",
-    "sanitize-html": "^2.13.0",
-    "time-ago": "^0.2.1",
-    "zod": "^3.23.8",
-    "zod-fetch": "^0.1.1"
-  },
-  "devDependencies": {
-    "@cloudflare/workers-types": "4.20240725.0",
-    "@eslint/js": "^9.7.0",
-    "@metronome-sh/dev-error-boundary": "^0.0.10",
-    "@remix-run/dev": "2.10.3",
-    "@types/react": "npm:types-react@19.0.0-alpha.3",
-    "@types/react-dom": "npm:types-react-dom@19.0.0-alpha.3",
-    "@types/sanitize-html": "^2.11.0",
-    "autoprefixer": "^10.4.19",
-    "eslint": "^9.7.0",
-    "prettier": "^3.3.3",
-    "prettier-plugin-tailwindcss": "^0.6.5",
-    "tailwindcss": "^3.4.7",
-    "typescript": "^5.5.4",
-    "typescript-eslint": "^7.17.0",
-    "vite": "^5.3.5",
-    "vite-plugin-cjs-interop": "^2.1.1",
-    "vite-tsconfig-paths": "^4.3.2",
-    "wrangler": "^3.67.0"
-  },
-  "pnpm": {
-    "overrides": {
-      "@types/react": "$@types/react",
-      "@types/react-dom": "$@types/react-dom",
-      "react": "$react",
-      "react-dom": "$react-dom"
-    }
-  },
-  "engines": {
-    "node": ">=18"
-  },
-  "packageManager": "pnpm@9.1.1+sha512.14e915759c11f77eac07faba4d019c193ec8637229e62ec99eefb7cf3c3b75c64447882b7c485142451ee3a6b408059cdfb7b7fa0341b975f12d0f7629c71195"
+	"name": "remix-hacker-news",
+	"private": true,
+	"description": "hacker news made with remix.run",
+	"repository": "https://github.com/mcansh/remix-hacker-news",
+	"author": "Logan McAnsh <logan@mcan.sh> (https://mcan.sh)",
+	"sideEffects": false,
+	"type": "module",
+	"scripts": {
+		"build": "remix vite:build",
+		"dev": "remix vite:dev",
+		"lint": "biome lint --write .",
+		"format": "biome format --write .",
+		"start": "wrangler pages dev --compatibility-date=2023-06-21 ./build/client"
+	},
+	"dependencies": {
+		"@remix-run/cloudflare": "2.10.3",
+		"@remix-run/cloudflare-pages": "2.10.3",
+		"@remix-run/react": "2.10.3",
+		"clsx": "^2.1.1",
+		"date-fns": "^3.6.0",
+		"isbot": "^5.1.13",
+		"pretty-cache-header": "^1.0.0",
+		"react": "19.0.0-rc-6230622a1a-20240610",
+		"react-dom": "19.0.0-rc-6230622a1a-20240610",
+		"remix-utils": "^7.6.0",
+		"sanitize-html": "^2.13.0",
+		"time-ago": "^0.2.1",
+		"zod": "^3.23.8",
+		"zod-fetch": "^0.1.1"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^1.8.3",
+		"@cloudflare/workers-types": "4.20240725.0",
+		"@eslint/js": "^9.7.0",
+		"@metronome-sh/dev-error-boundary": "^0.0.10",
+		"@remix-run/dev": "2.10.3",
+		"@types/react": "npm:types-react@19.0.0-alpha.3",
+		"@types/react-dom": "npm:types-react-dom@19.0.0-alpha.3",
+		"@types/sanitize-html": "^2.11.0",
+		"autoprefixer": "^10.4.19",
+		"eslint": "^9.7.0",
+		"prettier": "^3.3.3",
+		"prettier-plugin-tailwindcss": "^0.6.5",
+		"tailwindcss": "^3.4.7",
+		"typescript": "^5.5.4",
+		"typescript-eslint": "^7.17.0",
+		"vite": "^5.3.5",
+		"vite-plugin-cjs-interop": "^2.1.1",
+		"vite-tsconfig-paths": "^4.3.2",
+		"wrangler": "^3.67.0"
+	},
+	"pnpm": {
+		"overrides": {
+			"@types/react": "$@types/react",
+			"@types/react-dom": "$@types/react-dom",
+			"react": "$react",
+			"react-dom": "$react-dom"
+		}
+	},
+	"engines": {
+		"node": ">=18"
+	},
+	"packageManager": "pnpm@9.1.1+sha512.14e915759c11f77eac07faba4d019c193ec8637229e62ec99eefb7cf3c3b75c64447882b7c485142451ee3a6b408059cdfb7b7fa0341b975f12d0f7629c71195"
 }

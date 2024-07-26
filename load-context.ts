@@ -1,10 +1,10 @@
 import type { AppLoadContext } from "@remix-run/cloudflare";
-import type { PlatformProxy } from "wrangler";
 import { createCookieSessionStorage } from "@remix-run/cloudflare";
 import {
-  createTypedSessionStorage,
   type TypedSessionStorage,
+  createTypedSessionStorage,
 } from "remix-utils/typed-session";
+import type { PlatformProxy } from "wrangler";
 import { z } from "zod";
 
 // When using `wrangler.toml` to configure bindings,
@@ -12,8 +12,8 @@ import { z } from "zod";
 // into the global `Env` interface.
 // Need this empty interface so that typechecking passes
 // even if no `wrangler.toml` exists.
-
-interface Env {}
+// biome-ignore lint/complexity/noBannedTypes: this is fine...
+type Env = {};
 
 type Cloudflare = Omit<PlatformProxy<Env>, "dispose">;
 

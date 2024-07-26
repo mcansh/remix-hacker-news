@@ -1,9 +1,9 @@
-import { format } from "date-fns";
 import { unstable_defineLoader } from "@remix-run/cloudflare";
 import type { MetaArgs_SingleFetch } from "@remix-run/react";
 import { useLoaderData } from "@remix-run/react";
-import { api } from "~/.server/api";
+import { format } from "date-fns";
 import { cacheHeader } from "pretty-cache-header";
+import { api } from "~/.server/api";
 
 export const loader = unstable_defineLoader(async ({ params, response }) => {
   if (!params.username) {
@@ -23,7 +23,7 @@ export const loader = unstable_defineLoader(async ({ params, response }) => {
       public: true,
       maxAge: "0m",
       mustRevalidate: true,
-    }),
+    })
   );
   response.headers.append(
     "cdn-cache-control",
@@ -31,7 +31,7 @@ export const loader = unstable_defineLoader(async ({ params, response }) => {
       public: true,
       sMaxage: "60s",
       staleWhileRevalidate: "1w",
-    }),
+    })
   );
 
   return { user, meta };

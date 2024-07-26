@@ -4,10 +4,10 @@ import {
   unstable_defineLoader,
 } from "@remix-run/cloudflare";
 import { useLoaderData } from "@remix-run/react";
-import { z } from "zod";
 import { cacheHeader } from "pretty-cache-header";
-import { Feed } from "~/components/feed";
+import { z } from "zod";
 import { api } from "~/.server/api";
+import { FeedType } from "~/components/feed";
 
 export const meta: MetaFunction = () => {
   return [
@@ -36,7 +36,7 @@ export const loader = unstable_defineLoader(
     const { has_more, stories } = await api.get_posts(
       "/topstories.json",
       hidden,
-      page,
+      page
     );
 
     response.headers.append(
@@ -45,7 +45,7 @@ export const loader = unstable_defineLoader(
         public: true,
         maxAge: "0m",
         mustRevalidate: true,
-      }),
+      })
     );
     response.headers.append(
       "cdn-cache-control",
@@ -53,11 +53,11 @@ export const loader = unstable_defineLoader(
         public: true,
         sMaxage: "60s",
         staleWhileRevalidate: "1w",
-      }),
+      })
     );
 
     return { stories, page, has_more };
-  },
+  }
 );
 
 export const action = unstable_defineAction(
@@ -84,7 +84,7 @@ export const action = unstable_defineAction(
         response.status = 302;
         response.headers.append(
           "Set-Cookie",
-          await context.sessionStorage.commitSession(session),
+          await context.sessionStorage.commitSession(session)
         );
         response.headers.set("Location", "/");
         throw response;
@@ -95,7 +95,7 @@ export const action = unstable_defineAction(
         throw response;
       }
     }
-  },
+  }
 );
 
 export default function IndexPage() {

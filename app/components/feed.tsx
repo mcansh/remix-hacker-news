@@ -1,9 +1,9 @@
 import { Form, Link } from "@remix-run/react";
-import type { Feed } from "~/.server/api";
+import type { FeedType } from "~/.server/api";
 
 type Props =
-  | { hasMore?: never; page?: never; stories: Feed }
-  | { hasMore: boolean; page: number; stories: Feed };
+  | { hasMore?: never; page?: never; stories: FeedType }
+  | { hasMore: boolean; page: number; stories: FeedType };
 
 export function Feed({ hasMore, page, stories }: Props) {
   return (
