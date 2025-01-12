@@ -11,7 +11,7 @@ import {
 import appStylesHref from "~/app.css?url";
 
 export function links() {
-  return [{ href: appStylesHref, rel: "stylesheets" }];
+  return [{ href: appStylesHref, rel: "stylesheet" }];
 }
 
 export function Layout({ children }: { children: React.ReactNode }) {
