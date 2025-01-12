@@ -8,7 +8,11 @@ import {
   useRouteError,
 } from "@remix-run/react";
 
-import "~/app.css";
+import appStylesHref from "~/app.css?url";
+
+export function links() {
+  return [{ href: appStylesHref, rel: "stylesheet" }];
+}
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -20,7 +24,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body className="text-base text-default">
+      <body className="text-default text-base">
         {children}
         <Scripts />
         <ScrollRestoration />

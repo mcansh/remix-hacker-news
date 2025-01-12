@@ -6,6 +6,7 @@ import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 import { cjsInterop } from "vite-plugin-cjs-interop";
 import { devErrorBoundary } from "@metronome-sh/dev-error-boundary";
+import tailwind from "@tailwindcss/vite";
 import { getLoadContext } from "./load-context";
 
 export default defineConfig({
@@ -23,5 +24,6 @@ export default defineConfig({
     tsconfigPaths(),
     cjsInterop({ dependencies: ["time-ago"] }),
     devErrorBoundary(),
+    tailwind(),
   ],
 });
