@@ -21,8 +21,8 @@
     "date-fns": "^3.6.0",
     "isbot": "^5.1.13",
     "pretty-cache-header": "^1.0.0",
-    "react": "19.0.0-rc-f3e09d6328-20240612",
-    "react-dom": "19.0.0-rc-f3e09d6328-20240612",
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
     "remix-utils": "^7.6.0",
     "sanitize-html": "^2.13.0",
     "time-ago": "^0.2.1",
@@ -35,8 +35,8 @@
     "@metronome-sh/dev-error-boundary": "^0.0.10",
     "@remix-run/dev": "2.10.3",
     "@tailwindcss/vite": "4.0.0-beta.9",
-    "@types/react": "npm:types-react@19.0.0-alpha.3",
-    "@types/react-dom": "npm:types-react-dom@19.0.0-alpha.3",
+    "@types/react": "19.0.5",
+    "@types/react-dom": "19.0.3",
     "@types/sanitize-html": "^2.11.0",
     "eslint": "^9.7.0",
     "prettier": "^3.3.3",
@@ -49,16 +49,8 @@
     "vite-tsconfig-paths": "^4.3.2",
     "wrangler": "^3.67.0"
   },
-  "pnpm": {
-    "overrides": {
-      "@types/react": "$@types/react",
-      "@types/react-dom": "$@types/react-dom",
-      "react": "$react",
-      "react-dom": "$react-dom"
-    }
-  },
   "engines": {
-    "node": ">=18"
+    "node": ">=22"
   },
-  "packageManager": "pnpm@9.1.1+sha512.14e915759c11f77eac07faba4d019c193ec8637229e62ec99eefb7cf3c3b75c64447882b7c485142451ee3a6b408059cdfb7b7fa0341b975f12d0f7629c71195"
+  "packageManager": "pnpm@9.15.3+sha512.1f79bc245a66eb0b07c5d4d83131240774642caaa86ef7d0434ab47c0d16f66b04e21e0c086eb61e62c77efc4d7f7ec071afad3796af64892fae66509173893a"
 }
