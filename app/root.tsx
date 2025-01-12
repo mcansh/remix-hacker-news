@@ -8,7 +8,11 @@ import {
   useRouteError,
 } from "@remix-run/react";
 
-import "~/app.css";
+import appStylesHref from "~/app.css?url";
+
+export function links() {
+  return [{ href: appStylesHref, rel: "stylesheets" }],
+}
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
