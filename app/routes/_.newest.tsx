@@ -7,36 +7,36 @@ import { api } from "~/.server/api";
 import { FeedType } from "~/components/feed";
 
 export const loader = unstable_defineLoader(async ({ response }) => {
-  const { stories } = await api.get_posts("/newstories.json");
+	const { stories } = await api.get_posts("/newstories.json");
 
-  response.headers.append(
-    "Cache-Control",
-    cacheHeader({
-      public: true,
-      maxAge: "0m",
-      mustRevalidate: true,
-    })
-  );
-  response.headers.append(
-    "cdn-cache-control",
-    cacheHeader({
-      public: true,
-      sMaxage: "60s",
-      staleWhileRevalidate: "1w",
-    })
-  );
+	response.headers.append(
+		"Cache-Control",
+		cacheHeader({
+			public: true,
+			maxAge: "0m",
+			mustRevalidate: true,
+		}),
+	);
+	response.headers.append(
+		"cdn-cache-control",
+		cacheHeader({
+			public: true,
+			sMaxage: "60s",
+			staleWhileRevalidate: "1w",
+		}),
+	);
 
-  return { stories };
+	return { stories };
 });
 
 export const meta: MetaFunction = () => {
-  return [
-    { title: "New Links | Remix Hacker News" },
-    { name: "description", content: "Hacker News made with Remix.run" },
-  ];
+	return [
+		{ title: "New Links | Remix Hacker News" },
+		{ name: "description", content: "Hacker News made with Remix.run" },
+	];
 };
 
 export default function NewestPage() {
-  const data = useLoaderData<typeof loader>();
-  return <Feed stories={data.stories} />;
+	const data = useLoaderData<typeof loader>();
+	return <Feed stories={data.stories} />;
 }
