@@ -24,20 +24,12 @@ export const loader = async ({ params }: Route.LoaderArgs) => {
 
   headers.append(
     "Cache-Control",
-    cacheHeader({
-      public: true,
-      maxAge: "0m",
-      mustRevalidate: true,
-    }),
+    cacheHeader({ public: true, maxAge: "0m", mustRevalidate: true }),
   );
 
   headers.append(
     "cdn-cache-control",
-    cacheHeader({
-      public: true,
-      sMaxage: "60s",
-      staleWhileRevalidate: "1w",
-    }),
+    cacheHeader({ public: true, sMaxage: "60s", staleWhileRevalidate: "1w" }),
   );
 
   return data({ story, meta, kids }, { headers });
