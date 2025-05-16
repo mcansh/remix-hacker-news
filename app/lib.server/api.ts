@@ -1,3 +1,4 @@
+import { throwIfHttpError } from "fetch-extras";
 import * as timeago from "time-ago";
 import { z } from "zod/v4";
 
@@ -71,11 +72,7 @@ class Api {
   async get_user(username: string) {
     const url = this.#get_url(`/user/${username}.json`);
     url.searchParams.set("print", "pretty");
-    // const user = await zetch(UserSchema, url);
-    let response = await fetch(url);
-    if (!response.ok) {
-      throw new Error(`Failed to fetch user: ${response.statusText}`);
-    }
+    let response = await throwIfHttpError(fetch(url));
 
     let data = await response.json();
     const user = UserSchema.parse(data);
@@ -91,11 +88,7 @@ class Api {
     has_more: boolean;
   }> {
     const url = this.#get_url(endpoint);
-    // const ids = await zetch(z.array(z.number()), url);
-    let response = await fetch(url);
-    if (!response.ok) {
-      throw new Error(`Failed to fetch posts: ${response.statusText}`);
-    }
+    let response = await throwIfHttpError(fetch(url));
     let data = await response.json();
     const ids = z.array(z.number()).parse(data);
 
@@ -109,11 +102,8 @@ class Api {
 
     const critical = await Promise.all(
       critical_ids.map(async (id) => {
-        // return zetch(PostSchema, this.#get_url(`/item/${id}.json`));
-        let response = await fetch(this.#get_url(`/item/${id}.json`));
-        if (!response.ok) {
-          throw new Error(`Failed to fetch post: ${response.statusText}`);
-        }
+        let url = this.#get_url(`/item/${id}.json`);
+        let response = await throwIfHttpError(fetch(url));
         let data = await response.json();
         return PostSchema.parse(data);
       }),
@@ -139,11 +129,8 @@ class Api {
   }
 
   async get_post(id: number): Promise<Post> {
-    // const story = await zetch(PostSchema, this.#get_url(`/item/${id}.json`));
-    let response = await fetch(this.#get_url(`/item/${id}.json`));
-    if (!response.ok) {
-      throw new Error(`Failed to fetch post: ${response.statusText}`);
-    }
+    let url = this.#get_url(`/item/${id}.json`);
+    let response = await throwIfHttpError(fetch(url));
     let data = await response.json();
     const story = PostSchema.parse(data);
 
@@ -155,23 +142,21 @@ class Api {
 
   async get_comments(kids: Array<number> | undefined): Promise<Comment[]> {
     if (!kids) return [];
-    const commentsToFetch = kids.slice(0, 4);
     const comments = await Promise.all(
-      commentsToFetch.map((id) => {
+      kids.map((id) => {
         return this.get_comment(id);
       }),
     );
 
     const childComments = await Promise.all(
       comments.map(async (comment) => {
-        if (comment.kids) {
-          return this.get_comments(comment.kids);
-        }
+        if (!comment.kids) return [];
+        return this.get_comments(comment.kids);
       }),
     );
 
     return comments.map((comment, index) => {
-      const kids = childComments[index] || [];
+      const kids = childComments[index] ?? [];
       return {
         ...comment,
         kids: kids.filter((kid) => {
@@ -183,11 +168,7 @@ class Api {
 
   async get_comment(id: number) {
     const url = this.#get_url(`/item/${id}.json`);
-    // const item = await zetch(CommentSchema, url);
-    let response = await fetch(url);
-    if (!response.ok) {
-      throw new Error(`Failed to fetch comment: ${response.statusText}`);
-    }
+    let response = await throwIfHttpError(fetch(url));
     let data = await response.json();
     const item = CommentSchema.parse(data);
     return {
