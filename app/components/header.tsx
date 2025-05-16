@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { Link, NavLink } from "@remix-run/react";
+import { Link, NavLink } from "react-router";
 
 import logoUrl from "~/logo.png";
 
@@ -28,9 +28,9 @@ export function Header() {
             return (
               <li key={link.to}>
                 <NavLink
-                  className={({ isActive }) =>
-                    clsx("px-2.5", isActive ? "text-white" : "")
-                  }
+                  className={({ isActive }) => {
+                    return clsx("px-2.5", isActive ? "text-white" : "");
+                  }}
                   to={link.to}
                 >
                   {link.text}
@@ -41,9 +41,9 @@ export function Header() {
         </ul>
         <div>
           <NavLink
-            className={({ isActive }) =>
-              clsx("px-2.5", isActive ? "text-white" : "")
-            }
+            className={({ isActive }) => {
+              return clsx("px-2.5", isActive ? "text-white" : "");
+            }}
             to="/login"
           >
             login

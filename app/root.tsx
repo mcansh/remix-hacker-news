@@ -6,13 +6,16 @@ import {
   Scripts,
   ScrollRestoration,
   useRouteError,
-} from "@remix-run/react";
+} from "react-router";
+import appStylesHref from "~/app.css?url";
 
-import "~/app.css";
+export function links() {
+  return [{ rel: "stylesheet", href: appStylesHref }];
+}
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="bg-zinc-100">
+    <html lang="en" className="bg-white">
       <head>
         <meta charSet="utf-8" />
         <link rel="icon" href="/favicon.ico" />
@@ -40,7 +43,7 @@ export function ErrorBoundary() {
     console.error(error);
   }
 
-  if (process.env.NODE_ENV === "production") {
+  if (import.meta.env.PROD) {
     return (
       <div className="p-2 text-black">
         <pre>Unknown.</pre>

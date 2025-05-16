@@ -1,3 +1,16 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --default-font-family: Verdana;
+
+  --text-subtext: 7pt;
+  --text-admin: 8pt;
+  --text-comment: 9pt;
+  --text-base: 10pt;
+
+  --color-primary: #ff6600;
+  --color-bg: #f6f6ef;
+  --color-default: #828282;
+  --color-black: #000000;
+  --color-white: #ffffff;
+}

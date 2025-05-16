@@ -1,9 +1,5 @@
 import * as timeago from "time-ago";
-import { z } from "zod";
-import { createZodFetcher } from "zod-fetch";
-import sanitizeHtml from "sanitize-html";
-
-const zetch = createZodFetcher();
+import { z } from "zod/v4";
 
 const PostSchema = z.object({
   by: z.string(),
@@ -56,7 +52,8 @@ type Endpoint =
   | "/newstories.json"
   | "/showstories.json"
   | `/user/${string}.json`
-  | `/item/${number}.json`;
+  | `/item/${number}.json`
+  | (`/${string}.json` & {});
 
 class Api {
   #base_url = "https://hacker-news.firebaseio.com";
@@ -74,9 +71,15 @@ class Api {
   async get_user(username: string) {
     const url = this.#get_url(`/user/${username}.json`);
     url.searchParams.set("print", "pretty");
-    const user = await zetch(UserSchema, url);
-    const about = user.about ? sanitizeHtml(user.about) : "";
-    return { user: { ...user, about }, posts: [] };
+    // const user = await zetch(UserSchema, url);
+    let response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch user: ${response.statusText}`);
+    }
+
+    let data = await response.json();
+    const user = UserSchema.parse(data);
+    return { user, posts: [] };
   }
 
   async get_posts(
@@ -88,7 +91,13 @@ class Api {
     has_more: boolean;
   }> {
     const url = this.#get_url(endpoint);
-    const ids = await zetch(z.array(z.number()), url);
+    // const ids = await zetch(z.array(z.number()), url);
+    let response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch posts: ${response.statusText}`);
+    }
+    let data = await response.json();
+    const ids = z.array(z.number()).parse(data);
 
     const perPage = 30;
     let start = (page - 1) * perPage;
@@ -99,8 +108,14 @@ class Api {
       .slice(start, end);
 
     const critical = await Promise.all(
-      critical_ids.map((id) => {
-        return zetch(PostSchema, this.#get_url(`/item/${id}.json`));
+      critical_ids.map(async (id) => {
+        // return zetch(PostSchema, this.#get_url(`/item/${id}.json`));
+        let response = await fetch(this.#get_url(`/item/${id}.json`));
+        if (!response.ok) {
+          throw new Error(`Failed to fetch post: ${response.statusText}`);
+        }
+        let data = await response.json();
+        return PostSchema.parse(data);
       }),
     );
 
@@ -124,11 +139,16 @@ class Api {
   }
 
   async get_post(id: number): Promise<Post> {
-    const story = await zetch(PostSchema, this.#get_url(`/item/${id}.json`));
+    // const story = await zetch(PostSchema, this.#get_url(`/item/${id}.json`));
+    let response = await fetch(this.#get_url(`/item/${id}.json`));
+    if (!response.ok) {
+      throw new Error(`Failed to fetch post: ${response.statusText}`);
+    }
+    let data = await response.json();
+    const story = PostSchema.parse(data);
 
     return {
       ...story,
-      text: story.text ? sanitizeHtml(story.text) : undefined,
       relative_date: timeago.ago(story.time * 1000),
     };
   }
@@ -163,10 +183,15 @@ class Api {
 
   async get_comment(id: number) {
     const url = this.#get_url(`/item/${id}.json`);
-    const item = await zetch(CommentSchema, url);
+    // const item = await zetch(CommentSchema, url);
+    let response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch comment: ${response.statusText}`);
+    }
+    let data = await response.json();
+    const item = CommentSchema.parse(data);
     return {
       ...item,
-      text: item.text ? sanitizeHtml(item.text) : undefined,
       relative_date: timeago.ago(item.time * 1000),
     };
   }
