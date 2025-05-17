@@ -1,6 +1,4 @@
-import { cacheHeader } from "pretty-cache-header";
 import * as React from "react";
-import { data } from "react-router";
 import type { Comment } from "~/lib.server/api";
 import { api } from "~/lib.server/api";
 import type { Route } from "./+types/item.$id";
@@ -8,7 +6,7 @@ import type { Route } from "./+types/item.$id";
 export const loader = async ({ params }: Route.LoaderArgs) => {
   const id = Number(params.id);
 
-  if (isNaN(id)) {
+  if (Number.isNaN(id)) {
     throw new Response("Not Found", { status: 404, statusText: "Not Found" });
   }
 
@@ -20,31 +18,8 @@ export const loader = async ({ params }: Route.LoaderArgs) => {
     { name: "description", content: "Hacker News made with Remix.run" },
   ];
 
-  let headers = new Headers();
-
-  headers.append(
-    "Cache-Control",
-    cacheHeader({ public: true, maxAge: "0m", mustRevalidate: true }),
-  );
-
-  headers.append(
-    "cdn-cache-control",
-    cacheHeader({ public: true, sMaxage: "60s", staleWhileRevalidate: "1w" }),
-  );
-
-  return data({ story, meta, kids }, { headers });
+  return { story, meta, kids };
 };
-
-export function headers({
-  loaderHeaders,
-}: Route.HeadersArgs): Headers | HeadersInit {
-  let value = new Headers();
-  let cacheControl = loaderHeaders.get("Cache-Control");
-  let cdnCacheControl = loaderHeaders.get("cdn-cache-control");
-  if (cacheControl) value.append("Cache-Control", cacheControl);
-  if (cdnCacheControl) value.append("cdn-cache-control", cdnCacheControl);
-  return value;
-}
 
 export function meta({ data }: Route.MetaArgs): Route.MetaDescriptors {
   return data?.meta ?? [];

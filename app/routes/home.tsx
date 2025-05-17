@@ -1,5 +1,4 @@
-import { cacheHeader } from "pretty-cache-header";
-import { data, redirect } from "react-router";
+import { redirect } from "react-router";
 import { z } from "zod/v4";
 import { Feed } from "~/components/feed";
 import { api } from "~/lib.server/api";
@@ -27,37 +26,11 @@ export async function loader({ context, request }: Route.LoaderArgs) {
     ),
   );
 
-  let headers = new Headers();
-
-  headers.append(
-    "Cache-Control",
-    cacheHeader({ public: true, maxAge: "0m", mustRevalidate: true }),
-  );
-
-  headers.append(
-    "cdn-cache-control",
-    cacheHeader({ public: true, sMaxage: "60s", staleWhileRevalidate: "1w" }),
-  );
-
-  return data(
-    {
-      stories: result.flatMap((p) => p.stories),
-      page,
-      has_more: result.at(-1)?.has_more ?? false,
-    },
-    { headers },
-  );
-}
-
-export function headers({
-  loaderHeaders,
-}: Route.HeadersArgs): Headers | HeadersInit {
-  let value = new Headers();
-  let cacheControl = loaderHeaders.get("Cache-Control");
-  let cdnCacheControl = loaderHeaders.get("cdn-cache-control");
-  if (cacheControl) value.append("Cache-Control", cacheControl);
-  if (cdnCacheControl) value.append("cdn-cache-control", cdnCacheControl);
-  return value;
+  return {
+    stories: result.flatMap((p) => p.stories),
+    page,
+    has_more: result.at(-1)?.has_more ?? false,
+  };
 }
 
 export async function action({ context, request }: Route.ActionArgs) {

@@ -1,6 +1,48 @@
+import type { Cache, CacheEntry } from "@epic-web/cachified";
+import { cachified, totalTtl } from "@epic-web/cachified";
 import { throwIfHttpError } from "fetch-extras";
+import { LRUCache } from "lru-cache";
 import * as timeago from "time-ago";
 import { z } from "zod/v4";
+
+/* lru cache is not part of this package but a simple non-persistent cache */
+const lruInstance = new LRUCache<string, CacheEntry>({ max: 1000 });
+
+const lru: Cache = {
+  set(key, value) {
+    const ttl = totalTtl(value?.metadata);
+    return lruInstance.set(key, value, {
+      ttl: ttl === Infinity ? undefined : ttl,
+      start: value?.metadata?.createdTime,
+    });
+  },
+  get(key) {
+    return lruInstance.get(key);
+  },
+  delete(key) {
+    return lruInstance.delete(key);
+  },
+};
+
+function cachedFetch<Schema extends z.ZodTypeAny>(
+  url: string | URL | Request,
+  schema: Schema,
+) {
+  let key =
+    url instanceof URL ? url.href : url instanceof Request ? url.url : url;
+  return cachified({
+    key,
+    cache: lru,
+    async getFreshValue() {
+      console.log(`Fetching fresh value for ${key}`);
+      const response = await throwIfHttpError(fetch(url));
+      let data = await response.json();
+      return schema.parse(data);
+    },
+    ttl: 120_000 /* Two minutes */,
+    staleWhileRevalidate: 300_000 /* Five minutes */,
+  });
+}
 
 const PostSchema = z.object({
   by: z.string(),
@@ -88,9 +130,7 @@ class Api {
     has_more: boolean;
   }> {
     const url = this.#get_url(endpoint);
-    let response = await throwIfHttpError(fetch(url));
-    let data = await response.json();
-    const ids = z.array(z.number()).parse(data);
+    let ids = await cachedFetch(url, z.array(z.number()));
 
     const perPage = 30;
     let start = (page - 1) * perPage;
@@ -103,9 +143,7 @@ class Api {
     const critical = await Promise.all(
       critical_ids.map(async (id) => {
         let url = this.#get_url(`/item/${id}.json`);
-        let response = await throwIfHttpError(fetch(url));
-        let data = await response.json();
-        return PostSchema.parse(data);
+        return cachedFetch(url, PostSchema);
       }),
     );
 
@@ -130,9 +168,7 @@ class Api {
 
   async get_post(id: number): Promise<Post> {
     let url = this.#get_url(`/item/${id}.json`);
-    let response = await throwIfHttpError(fetch(url));
-    let data = await response.json();
-    const story = PostSchema.parse(data);
+    let story = await cachedFetch(url, PostSchema);
 
     return {
       ...story,
@@ -168,12 +204,10 @@ class Api {
 
   async get_comment(id: number) {
     const url = this.#get_url(`/item/${id}.json`);
-    let response = await throwIfHttpError(fetch(url));
-    let data = await response.json();
-    const item = CommentSchema.parse(data);
+    let comment = await cachedFetch(url, CommentSchema);
     return {
-      ...item,
-      relative_date: timeago.ago(item.time * 1000),
+      ...comment,
+      relative_date: timeago.ago(comment.time * 1000),
     };
   }
 }
