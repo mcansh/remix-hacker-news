@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import { Link, NavLink } from "react-router";
 
-import logoUrl from "~/logo.png";
+import logoUrl from "~/logo.svg";
 
 const links = [
   { to: "/newest", text: "new" },
