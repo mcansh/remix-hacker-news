@@ -5,7 +5,7 @@ import { Feed } from "~/components/feed";
 import { api } from "~/lib.server/api";
 import type { Route } from "./+types/home";
 
-export async function loader({ context,request }: Route.LoaderArgs) {
+export async function loader({ context, request }: Route.LoaderArgs) {
   const cookie = request.headers.get("Cookie");
   const session = await context.sessionStorage.getSession(cookie);
   const url = new URL(request.url);
@@ -20,10 +20,11 @@ export async function loader({ context,request }: Route.LoaderArgs) {
   const page = Number(pageParam) || 1;
 
   const hidden = session.get("hidden") || [];
-  const { has_more, stories } = await api.get_posts(
-    "/topstories.json",
-    hidden,
-    page,
+  let pages = [...Array.from({ length: page }).keys()];
+  const result = await Promise.all(
+    pages.map((current) =>
+      api.get_posts("/topstories.json", hidden, current + 1),
+    ),
   );
 
   let headers = new Headers();
@@ -38,7 +39,14 @@ export async function loader({ context,request }: Route.LoaderArgs) {
     cacheHeader({ public: true, sMaxage: "60s", staleWhileRevalidate: "1w" }),
   );
 
-  return data({ stories, page, has_more }, { headers });
+  return data(
+    {
+      stories: result.flatMap((p) => p.stories),
+      page,
+      has_more: result.at(-1)?.has_more ?? false,
+    },
+    { headers },
+  );
 }
 
 export function headers({
@@ -52,7 +60,7 @@ export function headers({
   return value;
 }
 
-export async function action({ context,request }: Route.ActionArgs) {
+export async function action({ context, request }: Route.ActionArgs) {
   const cookie = request.headers.get("Cookie");
   const session = await context.sessionStorage.getSession(cookie);
   const formData = await request.formData();

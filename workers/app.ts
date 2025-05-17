@@ -1,7 +1,6 @@
-import type { SessionData } from "react-router";
-import type { SessionStorage } from "react-router";
+import type { SessionData, SessionStorage } from "react-router";
 import { createCookieSessionStorage, createRequestHandler } from "react-router";
-import { createTypedSessionStorage } from 'remix-utils/typed-session'
+import { createTypedSessionStorage } from "remix-utils/typed-session";
 import { z } from "zod";
 
 declare module "react-router" {
@@ -10,7 +9,9 @@ declare module "react-router" {
       env: Env;
       ctx: ExecutionContext;
     };
-    sessionStorage: ReturnType<typeof createTypedSessionStorage<typeof sessionSchema>>
+    sessionStorage: ReturnType<
+      typeof createTypedSessionStorage<typeof sessionSchema>
+    >;
   }
 }
 
@@ -20,8 +21,8 @@ const requestHandler = createRequestHandler(
 );
 
 const sessionSchema = z.object({
-	hidden: z.optional(z.array(z.number()))
-})
+  hidden: z.optional(z.array(z.number())),
+});
 
 export default {
   async fetch(request, env, ctx) {
@@ -36,7 +37,10 @@ export default {
       },
     });
 
-    const typedSessionStorage = createTypedSessionStorage({sessionStorage, schema: sessionSchema})
+    const typedSessionStorage = createTypedSessionStorage({
+      sessionStorage,
+      schema: sessionSchema,
+    });
 
     return requestHandler(request, {
       cloudflare: { env, ctx },

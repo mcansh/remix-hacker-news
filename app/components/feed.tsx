@@ -87,6 +87,7 @@ export function Feed({ hasMore, page, stories }: Props) {
           prefetch="intent"
           to={{ search: `?page=${page + 1}` }}
           className="ml-8 mt-8 block text-black"
+          preventScrollReset
         >
           More
         </Link>
