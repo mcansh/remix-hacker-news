@@ -3,18 +3,18 @@ import { data, redirect } from "react-router";
 import { z } from "zod/v4";
 import { Feed } from "~/components/feed";
 import { api } from "~/lib.server/api";
-import { sessionStorage } from "~/lib.server/session";
 import type { Route } from "./+types/home";
 
-export async function loader({ request }: Route.LoaderArgs) {
+export async function loader({ context,request }: Route.LoaderArgs) {
   const cookie = request.headers.get("Cookie");
-  const session = await sessionStorage.getSession(cookie);
+  const session = await context.sessionStorage.getSession(cookie);
   const url = new URL(request.url);
 
   const pageParam = url.searchParams.get("page");
 
   if (pageParam && pageParam === "1") {
-    throw redirect("/");
+    url.searchParams.delete("page");
+    throw redirect(url.toString());
   }
 
   const page = Number(pageParam) || 1;
@@ -52,9 +52,9 @@ export function headers({
   return value;
 }
 
-export async function action({ request }: Route.ActionArgs) {
+export async function action({ context,request }: Route.ActionArgs) {
   const cookie = request.headers.get("Cookie");
-  const session = await sessionStorage.getSession(cookie);
+  const session = await context.sessionStorage.getSession(cookie);
   const formData = await request.formData();
   const intent = formData.get("intent");
 
@@ -74,7 +74,7 @@ export async function action({ request }: Route.ActionArgs) {
 
       throw redirect("/", {
         headers: {
-          "Set-Cookie": await sessionStorage.commitSession(session),
+          "Set-Cookie": await context.sessionStorage.commitSession(session),
         },
       });
     }
