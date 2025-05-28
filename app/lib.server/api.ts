@@ -1,9 +1,48 @@
+import type { Cache, CacheEntry } from "@epic-web/cachified";
+import { cachified, totalTtl } from "@epic-web/cachified";
+import { throwIfHttpError } from "fetch-extras";
+import { LRUCache } from "lru-cache";
 import * as timeago from "time-ago";
-import { z } from "zod";
-import { createZodFetcher } from "zod-fetch";
-import sanitizeHtml from "sanitize-html";
+import { z } from "zod/v4";
 
-const zetch = createZodFetcher();
+/* lru cache is not part of this package but a simple non-persistent cache */
+const lruInstance = new LRUCache<string, CacheEntry>({ max: 1000 });
+
+const lru: Cache = {
+  set(key, value) {
+    const ttl = totalTtl(value?.metadata);
+    return lruInstance.set(key, value, {
+      ttl: ttl === Infinity ? undefined : ttl,
+      start: value?.metadata?.createdTime,
+    });
+  },
+  get(key) {
+    return lruInstance.get(key);
+  },
+  delete(key) {
+    return lruInstance.delete(key);
+  },
+};
+
+function cachedFetch<Schema extends z.ZodTypeAny>(
+  url: string | URL | Request,
+  schema: Schema,
+) {
+  let key =
+    url instanceof URL ? url.href : url instanceof Request ? url.url : url;
+  return cachified({
+    key,
+    cache: lru,
+    async getFreshValue() {
+      console.log(`Fetching fresh value for ${key}`);
+      const response = await throwIfHttpError(fetch(url));
+      let data = await response.json();
+      return schema.parse(data);
+    },
+    ttl: 120_000 /* Two minutes */,
+    staleWhileRevalidate: 300_000 /* Five minutes */,
+  });
+}
 
 const PostSchema = z.object({
   by: z.string(),
@@ -56,7 +95,8 @@ type Endpoint =
   | "/newstories.json"
   | "/showstories.json"
   | `/user/${string}.json`
-  | `/item/${number}.json`;
+  | `/item/${number}.json`
+  | (`/${string}.json` & {});
 
 class Api {
   #base_url = "https://hacker-news.firebaseio.com";
@@ -74,9 +114,11 @@ class Api {
   async get_user(username: string) {
     const url = this.#get_url(`/user/${username}.json`);
     url.searchParams.set("print", "pretty");
-    const user = await zetch(UserSchema, url);
-    const about = user.about ? sanitizeHtml(user.about) : "";
-    return { user: { ...user, about }, posts: [] };
+    let response = await throwIfHttpError(fetch(url));
+
+    let data = await response.json();
+    const user = UserSchema.parse(data);
+    return { user, posts: [] };
   }
 
   async get_posts(
@@ -88,7 +130,7 @@ class Api {
     has_more: boolean;
   }> {
     const url = this.#get_url(endpoint);
-    const ids = await zetch(z.array(z.number()), url);
+    let ids = await cachedFetch(url, z.array(z.number()));
 
     const perPage = 30;
     let start = (page - 1) * perPage;
@@ -99,8 +141,9 @@ class Api {
       .slice(start, end);
 
     const critical = await Promise.all(
-      critical_ids.map((id) => {
-        return zetch(PostSchema, this.#get_url(`/item/${id}.json`));
+      critical_ids.map(async (id) => {
+        let url = this.#get_url(`/item/${id}.json`);
+        return cachedFetch(url, PostSchema);
       }),
     );
 
@@ -124,34 +167,32 @@ class Api {
   }
 
   async get_post(id: number): Promise<Post> {
-    const story = await zetch(PostSchema, this.#get_url(`/item/${id}.json`));
+    let url = this.#get_url(`/item/${id}.json`);
+    let story = await cachedFetch(url, PostSchema);
 
     return {
       ...story,
-      text: story.text ? sanitizeHtml(story.text) : undefined,
       relative_date: timeago.ago(story.time * 1000),
     };
   }
 
   async get_comments(kids: Array<number> | undefined): Promise<Comment[]> {
     if (!kids) return [];
-    const commentsToFetch = kids.slice(0, 4);
     const comments = await Promise.all(
-      commentsToFetch.map((id) => {
+      kids.map((id) => {
         return this.get_comment(id);
       }),
     );
 
     const childComments = await Promise.all(
       comments.map(async (comment) => {
-        if (comment.kids) {
-          return this.get_comments(comment.kids);
-        }
+        if (!comment.kids) return [];
+        return this.get_comments(comment.kids);
       }),
     );
 
     return comments.map((comment, index) => {
-      const kids = childComments[index] || [];
+      const kids = childComments[index] ?? [];
       return {
         ...comment,
         kids: kids.filter((kid) => {
@@ -163,11 +204,10 @@ class Api {
 
   async get_comment(id: number) {
     const url = this.#get_url(`/item/${id}.json`);
-    const item = await zetch(CommentSchema, url);
+    let comment = await cachedFetch(url, CommentSchema);
     return {
-      ...item,
-      text: item.text ? sanitizeHtml(item.text) : undefined,
-      relative_date: timeago.ago(item.time * 1000),
+      ...comment,
+      relative_date: timeago.ago(comment.time * 1000),
     };
   }
 }

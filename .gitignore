@@ -1,9 +1,12 @@
-node_modules
+.DS_Store
+/node_modules/
+*.tsbuildinfo
 
-/.cache
-/build
-/public/build
-/dist
+# React Router
+/.react-router/
+/build/
 
-app/styles/tailwind.css
-.dev.vars
+# Cloudflare
+.mf
+.wrangler
+.dev.vars*

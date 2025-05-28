@@ -1,17 +1,13 @@
 import * as React from "react";
-import { unstable_defineLoader } from "@remix-run/cloudflare";
-import { useLoaderData } from "@remix-run/react";
-import type { MetaArgs_SingleFetch } from "@remix-run/react";
-import { cacheHeader } from "pretty-cache-header";
-import { api } from "~/.server/api";
-import type { Comment } from "~/.server/api";
+import type { Comment } from "~/lib.server/api";
+import { api } from "~/lib.server/api";
+import type { Route } from "./+types/item.$id";
 
-export const loader = unstable_defineLoader(async ({ params, response }) => {
+export const loader = async ({ params }: Route.LoaderArgs) => {
   const id = Number(params.id);
 
-  if (isNaN(id)) {
-    response.status = 404;
-    throw response;
+  if (Number.isNaN(id)) {
+    throw new Response("Not Found", { status: 404, statusText: "Not Found" });
   }
 
   const story = await api.get_post(id);
@@ -22,51 +18,32 @@ export const loader = unstable_defineLoader(async ({ params, response }) => {
     { name: "description", content: "Hacker News made with Remix.run" },
   ];
 
-  response.headers.append(
-    "Cache-Control",
-    cacheHeader({
-      public: true,
-      maxAge: "0m",
-      mustRevalidate: true,
-    }),
-  );
-  response.headers.append(
-    "cdn-cache-control",
-    cacheHeader({
-      public: true,
-      sMaxage: "60s",
-      staleWhileRevalidate: "1w",
-    }),
-  );
-
   return { story, meta, kids };
-});
+};
 
-export function meta({ data }: MetaArgs_SingleFetch<typeof loader>) {
+export function meta({ data }: Route.MetaArgs): Route.MetaDescriptors {
   return data?.meta ?? [];
 }
 
-export default function ItemPage() {
-  const data = useLoaderData<typeof loader>();
-
-  const commentText = data.story.descendants === 1 ? "comment" : "comments";
-  const pointsText = data.story.score === 1 ? "point" : "points";
-
-  const comments = React.use(data.kids);
+export default function ItemPage({ loaderData }: Route.ComponentProps) {
+  const comments = React.use(loaderData.kids);
 
   return (
     <div className="px-4 py-2">
-      <h1 className="text-black">{data.story.title}</h1>
+      <h1 className="text-black">{loaderData.story.title}</h1>
 
       <p className="text-xs">
-        {data.story.score} {pointsText} by {data.story.by}{" "}
-        {data.story.relative_date} | {data.story.descendants} {commentText}
+        {loaderData.story.score}{" "}
+        {loaderData.story.score === 1 ? "point" : "points"} by{" "}
+        {loaderData.story.by} {loaderData.story.relative_date} |{" "}
+        {loaderData.story.descendants}{" "}
+        {loaderData.story.descendants === 1 ? "comment" : "comments"}
       </p>
 
-      {data.story.text ? (
+      {loaderData.story.text ? (
         <div
           className="mt-2 text-black"
-          dangerouslySetInnerHTML={{ __html: data.story.text }}
+          dangerouslySetInnerHTML={{ __html: loaderData.story.text }}
         />
       ) : null}
 
