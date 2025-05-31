@@ -1,5 +1,5 @@
 import { format } from "date-fns";
-import { api } from "~/lib.server/api";
+import { api } from "../lib.server/api";
 import type { Route } from "./+types/user.$username";
 
 export async function loader({ params }: Route.LoaderArgs) {
@@ -16,7 +16,7 @@ export function meta({ data }: Route.MetaArgs) {
   return data?.meta ?? [];
 }
 
-export default function NewestPage({ loaderData }: Route.ComponentProps) {
+export function ServerComponent({ loaderData }: Route.ComponentProps) {
   return (
     <div>
       <div>user: {loaderData.user.id}</div>

@@ -1,7 +1,8 @@
-import clsx from "clsx";
 import { Link, NavLink } from "react-router";
 
-import logoUrl from "~/logo.svg";
+import clsx from "clsx";
+
+
 
 const links = [
   { to: "/newest", text: "new" },
@@ -19,7 +20,7 @@ export function Header() {
         to="/"
         className="mb-2.5 mr-2.5 flex flex-shrink-0 items-center sm:mb-0"
       >
-        <img height={20} width={20} src={logoUrl} alt="remix logo" />
+        <img height={20} width={20} src="/logo.svg" alt="remix logo" />
         <h1 className="ml-1 font-bold">Hacker Remix</h1>
       </Link>
       <nav className="flex w-full justify-between">

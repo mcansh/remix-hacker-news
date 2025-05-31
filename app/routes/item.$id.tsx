@@ -1,6 +1,6 @@
 import * as React from "react";
-import type { Comment } from "~/lib.server/api";
-import { api } from "~/lib.server/api";
+import type { Comment } from "../lib.server/api";
+import { api } from "../lib.server/api";
 import type { Route } from "./+types/item.$id";
 
 export const loader = async ({ params }: Route.LoaderArgs) => {
@@ -25,7 +25,7 @@ export function meta({ data }: Route.MetaArgs): Route.MetaDescriptors {
   return data?.meta ?? [];
 }
 
-export default function ItemPage({ loaderData }: Route.ComponentProps) {
+export function ServerComponent({ loaderData }: Route.ComponentProps) {
   const comments = React.use(loaderData.kids);
 
   return (

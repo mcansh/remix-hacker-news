@@ -1,54 +1,62 @@
 {
   "name": "remix-hacker-news",
   "private": true,
-  "description": "hacker news made with remix.run",
-  "repository": "https://github.com/mcansh/remix-hacker-news",
-  "author": "Logan McAnsh <logan@mcan.sh> (https://mcan.sh)",
-  "sideEffects": false,
-  "type": "module",
+  "description": "React Router Hacker News clone",
+  "targets": {
+    "server": {
+      "source": "app/server.ts",
+      "context": "react-server",
+      "scopeHoist": false,
+      "includeNodeModules": {
+        "express": false
+      }
+    }
+  },
   "scripts": {
-    "dev": "react-router dev",
-    "build": "react-router build",
+    "dev": "parcel",
+    "build": "parcel build",
     "lint": "eslint --no-error-on-unmatched-pattern --cache --cache-location ./node_modules/.cache/eslint --fix .",
     "format": "prettier --ignore-path .prettierignore --ignore-path .gitignore --ignore-unknown --write .",
-    "preview": "npm run build && vite preview",
-    "deploy": "npm run build && wrangler deploy",
-    "cf-typegen": "wrangler types",
-    "typecheck": "npm run cf-typegen && react-router typegen && tsc -b"
+    "typecheck": "react-router typegen && tsc -b",
+    "start": "node ./dist/server/server.js"
   },
   "dependencies": {
     "@epic-web/cachified": "^5.5.2",
+    "@parcel/runtime-rsc": "^2.15.2",
+    "@ryanflorence/async-provider": "^0.0.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
+    "express": "^5.1.0",
     "fetch-extras": "^1.0.0",
     "isbot": "^5.1.28",
     "lru-cache": "^11.1.0",
     "pretty-cache-header": "^1.0.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "react-router": "^7.6.0",
+    "react-router": "0.0.0-experimental-e87ed2fd4",
+    "react-server-dom-parcel": "^19.1.0",
     "remix-utils": "^8.7.0",
     "time-ago": "^0.2.1",
-    "zod": "3.25.0-beta.20250516T215113"
+    "zod": "3.25.42"
   },
   "devDependencies": {
-    "@cloudflare/vite-plugin": "^1.2.2",
-    "@cloudflare/workers-types": "^4.20250515.0",
-    "@eslint/js": "^9.27.0",
-    "@react-router/dev": "^7.6.0",
-    "@tailwindcss/vite": "^4.1.7",
-    "@types/node": "^22.15.18",
-    "@types/react": "^19.1.4",
+    "@eslint/js": "^9.28.0",
+    "@react-router/dev": "0.0.0-experimental-e87ed2fd4",
+    "@tailwindcss/postcss": "^4.1.8",
+    "@types/express": "^5.0.2",
+    "@types/node": "^22.15.29",
+    "@types/react": "^19.1.6",
     "@types/react-dom": "^19.1.5",
-    "eslint": "^9.27.0",
+    "@typescript/native-preview": "7.0.0-dev.20250531.1",
+    "eslint": "^9.28.0",
+    "parcel": "^2.15.2",
+    "parcel-config-react-router-experimental": "^1.0.16",
+    "postcss": "^8.5.4",
     "prettier": "^3.5.3",
     "prettier-plugin-organize-imports": "^4.1.0",
-    "prettier-plugin-tailwindcss": "^0.6.11",
-    "tailwindcss": "^4.1.7",
-    "typescript": "^5.8.3",
-    "vite": "^6.3.5",
-    "vite-tsconfig-paths": "^5.1.4",
-    "wrangler": "^4.15.2"
+    "prettier-plugin-tailwindcss": "^0.6.12",
+    "tailwindcss": "^4.1.8",
+    "typescript": "^5.8.3"
   },
   "packageManager": "pnpm@10.11.0+sha512.6540583f41cc5f628eb3d9773ecee802f4f9ef9923cc45b69890fb47991d4b092964694ec3a4f738a420c918a333062c8b925d312f42e4f0c263eb603551f977"
 }

@@ -1,63 +1,52 @@
-import * as React from "react";
-import {
-  Links,
-  Meta,
-  Outlet,
-  Scripts,
-  ScrollRestoration,
-  useRouteError,
-} from "react-router";
-import appStylesHref from "~/app.css?url";
+import { provide } from "@ryanflorence/async-provider";
+import { Outlet } from "react-router";
+import { unstable_MiddlewareFunction } from "react-router/rsc";
+import "./app.css";
+import { stringContext } from "./context";
+import { ErrorReporter, GlobalNavigationLoadingBar } from "./root.client";
+import { sessionMiddleware} from './lib.server/middleware'
 
-export function links() {
-  return [{ rel: "stylesheet", href: appStylesHref }];
-}
+export const unstable_middleware: unstable_MiddlewareFunction<Response>[] = [
+	sessionMiddleware,
+  async ({ request }, next) => {
+    console.log(">>> RSC middleware", request.url);
+    let res = await provide(new Map([[stringContext, "Hello World!!!"]]), next);
+    res.headers.set("X-Custom-Header", "Value");
+    console.log("<<< RSC middleware", request.url);
+    return res;
+  },
+];
 
 export function Layout({ children }: { children: React.ReactNode }) {
+  console.log("Rendering Layout");
+
   return (
     <html lang="en" className="bg-white">
       <head>
         <meta charSet="utf-8" />
         <link rel="icon" href="/favicon.ico" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <Meta />
-        <Links />
+        {/* <Meta /> */}
+        {/* <Links /> */}
       </head>
       <body className="text-base text-default">
+        <GlobalNavigationLoadingBar />
         {children}
-        <Scripts />
-        <ScrollRestoration />
+        {/* <Scripts /> */}
+        {/* <ScrollRestoration /> */}
       </body>
     </html>
   );
 }
 
-export default function App() {
-  return <Outlet />;
+export function ServerComponent() {
+  return (
+    <div id="root">
+      <Outlet />
+    </div>
+  );
 }
 
 export function ErrorBoundary() {
-  const error = useRouteError();
-
-  if (typeof document === "undefined") {
-    console.error(error);
-  }
-
-  if (import.meta.env.PROD) {
-    return (
-      <div className="p-2 text-black">
-        <pre>Unknown.</pre>
-      </div>
-    );
-  }
-
-  return (
-    <div className="p-2 text-black">
-      {error instanceof Error ? (
-        <pre>{error.message}</pre>
-      ) : (
-        <pre>{JSON.stringify(error, null, 2)}</pre>
-      )}
-    </div>
-  );
+  return <ErrorReporter />;
 }

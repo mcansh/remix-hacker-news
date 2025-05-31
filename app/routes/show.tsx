@@ -1,5 +1,5 @@
-import { Feed } from "~/components/feed";
-import { api } from "~/lib.server/api";
+import { Feed } from "../components/feed";
+import { api } from "../lib.server/api";
 import type { Route } from "./+types/show";
 
 export const loader = async () => {
@@ -15,6 +15,6 @@ export const meta = (): Route.MetaDescriptors => {
   ];
 };
 
-export default function ShowPage({ loaderData }: Route.ComponentProps) {
+export function ServerComponent({ loaderData }: Route.ComponentProps) {
   return <Feed stories={loaderData.stories} />;
 }

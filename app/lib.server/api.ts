@@ -1,3 +1,4 @@
+"use server";
 import type { Cache, CacheEntry } from "@epic-web/cachified";
 import { cachified, totalTtl } from "@epic-web/cachified";
 import { throwIfHttpError } from "fetch-extras";

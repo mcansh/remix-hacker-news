@@ -1,12 +1,16 @@
 .DS_Store
 /node_modules/
 *.tsbuildinfo
+/.parcel-cache/
 
 # React Router
 /.react-router/
+/.react-router-parcel/
+/dist/
 /build/
 
 # Cloudflare
 .mf
 .wrangler
 .dev.vars*
+

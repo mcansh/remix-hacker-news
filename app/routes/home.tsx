@@ -1,12 +1,12 @@
-import { redirect } from "react-router";
+import { redirect } from "react-router/rsc";
 import { z } from "zod/v4";
-import { Feed } from "~/components/feed";
-import { api } from "~/lib.server/api";
-import type { Route } from "./+types/home";
+import { Feed } from "../components/feed";
+import { api } from "../lib.server/api";
+import { Route } from "./+types/home";
+import { getSession } from "../lib.server/middleware";
 
 export async function loader({ context, request }: Route.LoaderArgs) {
-  const cookie = request.headers.get("Cookie");
-  const session = await context.sessionStorage.getSession(cookie);
+  const session = getSession(context);
   const url = new URL(request.url);
 
   const pageParam = url.searchParams.get("page");
@@ -21,8 +21,8 @@ export async function loader({ context, request }: Route.LoaderArgs) {
   const hidden = session.get("hidden") || [];
   let pages = [...Array.from({ length: page }).keys()];
   const result = await Promise.all(
-    pages.map((current) =>
-      api.get_posts("/topstories.json", hidden, current + 1),
+    pages.map(
+      (current) => api.get_posts("/topstories.json", hidden, current + 1),
     ),
   );
 
@@ -34,15 +34,16 @@ export async function loader({ context, request }: Route.LoaderArgs) {
 }
 
 export async function action({ context, request }: Route.ActionArgs) {
-  const cookie = request.headers.get("Cookie");
-  const session = await context.sessionStorage.getSession(cookie);
-  const formData = await request.formData();
+  const session = await getSession(context);
+  const formData = await request.clone().formData();
   const intent = formData.get("intent");
 
-  const schema = z.object({
-    intent: z.string(),
-    id: z.coerce.number(),
-  });
+  const schema = z.discriminatedUnion('intent', [
+	  z.object({
+	    intent: z.literal("hide"),
+	    id: z.coerce.number(),
+		})
+  ]);
 
   const result = schema.parse(Object.fromEntries(formData.entries()));
 
@@ -53,11 +54,7 @@ export async function action({ context, request }: Route.ActionArgs) {
       hiddenSet.add(result.id);
       session.set("hidden", Array.from(hiddenSet));
 
-      throw redirect("/", {
-        headers: {
-          "Set-Cookie": await context.sessionStorage.commitSession(session),
-        },
-      });
+      throw redirect("/");
     }
 
     default: {
@@ -74,7 +71,7 @@ export function meta() {
   ];
 }
 
-export default function IndexPage({ loaderData }: Route.ComponentProps) {
+export function ServerComponent({ loaderData }: Route.ComponentProps) {
   return (
     <Feed
       stories={loaderData.stories}
