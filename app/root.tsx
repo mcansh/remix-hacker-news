@@ -23,6 +23,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta name="robots" content="none" />
         <Meta />
         <Links />
+        <script src="https://cdn.usefathom.com/script.js" data-site="ZQQCFWCP" defer />
       </head>
       <body className="text-base text-default">
         {children}
