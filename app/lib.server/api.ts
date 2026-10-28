@@ -28,7 +28,7 @@ function cachedFetch<Schema extends z.ZodTypeAny>(
   url: string | URL | Request,
   schema: Schema,
 ) {
-  let key =
+  const key =
     url instanceof URL ? url.href : url instanceof Request ? url.url : url;
   return cachified({
     key,
@@ -36,7 +36,7 @@ function cachedFetch<Schema extends z.ZodTypeAny>(
     async getFreshValue() {
       console.log(`Fetching fresh value for ${key}`);
       const response = await throwIfHttpError(fetch(url));
-      let data = await response.json();
+      const data = await response.json();
       return schema.parse(data);
     },
     ttl: 120_000 /* Two minutes */,
@@ -114,9 +114,9 @@ class Api {
   async get_user(username: string) {
     const url = this.#get_url(`/user/${username}.json`);
     url.searchParams.set("print", "pretty");
-    let response = await throwIfHttpError(fetch(url));
+    const response = await throwIfHttpError(fetch(url));
 
-    let data = await response.json();
+    const data = await response.json();
     const user = UserSchema.parse(data);
     return { user, posts: [] };
   }
@@ -130,7 +130,7 @@ class Api {
     has_more: boolean;
   }> {
     const url = this.#get_url(endpoint);
-    let ids = await cachedFetch(url, z.array(z.number()));
+    const ids = await cachedFetch(url, z.array(z.number()));
 
     const perPage = 30;
     let start = (page - 1) * perPage;
@@ -142,7 +142,7 @@ class Api {
 
     const critical = await Promise.all(
       critical_ids.map(async (id) => {
-        let url = this.#get_url(`/item/${id}.json`);
+        const url = this.#get_url(`/item/${id}.json`);
         return cachedFetch(url, PostSchema);
       }),
     );
@@ -167,8 +167,8 @@ class Api {
   }
 
   async get_post(id: number): Promise<Post> {
-    let url = this.#get_url(`/item/${id}.json`);
-    let story = await cachedFetch(url, PostSchema);
+    const url = this.#get_url(`/item/${id}.json`);
+    const story = await cachedFetch(url, PostSchema);
 
     return {
       ...story,
@@ -204,7 +204,7 @@ class Api {
 
   async get_comment(id: number) {
     const url = this.#get_url(`/item/${id}.json`);
-    let comment = await cachedFetch(url, CommentSchema);
+    const comment = await cachedFetch(url, CommentSchema);
     return {
       ...comment,
       relative_date: timeago.ago(comment.time * 1000),
