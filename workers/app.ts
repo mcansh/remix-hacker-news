@@ -1,4 +1,3 @@
-import type { SessionData, SessionStorage } from "react-router";
 import { createCookieSessionStorage, createRequestHandler } from "react-router";
 import { createTypedSessionStorage } from "remix-utils/typed-session";
 import { z } from "zod";

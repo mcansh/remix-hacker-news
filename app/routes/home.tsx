@@ -19,7 +19,7 @@ export async function loader({ context, request }: Route.LoaderArgs) {
   const page = Number(pageParam) || 1;
 
   const hidden = session.get("hidden") || [];
-  let pages = [...Array.from({ length: page }).keys()];
+  const pages = [...Array.from({ length: page }).keys()];
   const result = await Promise.all(
     pages.map((current) =>
       api.get_posts("/topstories.json", hidden, current + 1),

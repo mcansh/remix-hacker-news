@@ -6,10 +6,14 @@
   "author": "Logan McAnsh <logan@mcan.sh> (https://mcan.sh)",
   "sideEffects": false,
   "type": "module",
+  "engines": {
+    "node": ">=22 <23"
+  },
   "scripts": {
     "dev": "react-router dev",
     "build": "react-router build",
     "lint": "eslint --no-error-on-unmatched-pattern --cache --cache-location ./node_modules/.cache/eslint --fix .",
+    "test": "node --test test/*.test.js",
     "format": "prettier --ignore-path .prettierignore --ignore-path .gitignore --ignore-unknown --write .",
     "preview": "npm run build && vite preview",
     "deploy": "npm run build && wrangler deploy",
@@ -46,6 +50,7 @@
     "prettier-plugin-tailwindcss": "^0.6.11",
     "tailwindcss": "^4.1.7",
     "typescript": "^5.8.3",
+    "typescript-eslint": "^8.72.1",
     "vite": "^6.3.5",
     "vite-tsconfig-paths": "^5.1.4",
     "wrangler": "^4.15.2"

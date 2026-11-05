@@ -3,7 +3,7 @@ import { api } from "~/lib.server/api";
 import type { Route } from "./+types/ask";
 
 export const loader = async () => {
-  let { stories } = await api.get_posts("/askstories.json", [], 1);
+  const { stories } = await api.get_posts("/askstories.json", [], 1);
 
   return { stories };
 };
