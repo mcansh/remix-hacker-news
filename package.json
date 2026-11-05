@@ -6,6 +6,9 @@
   "author": "Logan McAnsh <logan@mcan.sh> (https://mcan.sh)",
   "sideEffects": false,
   "type": "module",
+  "engines": {
+    "node": ">=22 <23"
+  },
   "scripts": {
     "dev": "react-router dev",
     "build": "react-router build",
